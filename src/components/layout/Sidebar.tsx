@@ -26,27 +26,27 @@ const DrawerHeader = styled('div')(({ theme }) => ({
 
 
 
-const datas : {
-    title : string;
-    url : string;
-    icon? : JSX.Element;
+const datas: {
+    title: string;
+    url: string;
+    icon?: JSX.Element;
 }[] = [
- {
-    title : "หน้าแรก" ,
-    url : "/home" ,
-    icon : <HomeIcon/>
- } ,
- {
-    title : "ข้อมูลนักเรียน" ,
-    url : "/home" ,
-    icon : <PeopleAltIcon/>
- } ,
- {
-    title : "ข้อมูลคุณครู" ,
-    url : "/home" ,
-    icon : <Person4Icon/>
- } ,
-]
+        {
+            title: "หน้าแรก",
+            url: "/home",
+            icon: <HomeIcon />
+        },
+        {
+            title: "ข้อมูลนักเรียน",
+            url: "/student",
+            icon: <PeopleAltIcon />
+        },
+        {
+            title: "ข้อมูลคุณครู",
+            url: "/home",
+            icon: <Person4Icon />
+        },
+    ]
 
 const Sidebar: FC<Props> = ({ handleDrawerClose, open }) => {
     const theme = useTheme();
@@ -79,7 +79,7 @@ const Sidebar: FC<Props> = ({ handleDrawerClose, open }) => {
             <Divider />
             <List>
                 {datas.map((item, index) => (
-                    <ListItem  key={index} disablePadding>
+                    <ListItem key={index} disablePadding>
                         <ListItemButton href={item.url} >
                             <ListItemIcon>
                                 {item.icon}
@@ -91,15 +91,15 @@ const Sidebar: FC<Props> = ({ handleDrawerClose, open }) => {
             </List>
             <Divider />
             <List>
-               
-                    <ListItem disablePadding>
-                        <ListItemButton>
-                            <ListItemIcon>
-                               <LogoutIcon/>
-                            </ListItemIcon>
-                            <ListItemText primary={"ออกจากระบบ"} />
-                        </ListItemButton>
-                    </ListItem>
+
+                <ListItem disablePadding>
+                    <ListItemButton>
+                        <ListItemIcon>
+                            <LogoutIcon />
+                        </ListItemIcon>
+                        <ListItemText primary={"ออกจากระบบ"} />
+                    </ListItemButton>
+                </ListItem>
             </List>
         </Drawer>
     )

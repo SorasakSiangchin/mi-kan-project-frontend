@@ -2,6 +2,7 @@ import { ClassRoomResponse } from "@/models/classRooms/classRoomResponse";
 import { ServiceResponse } from "@/models/serviceResponse";
 import server from "@/services/serverService";
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
+import { RootState } from "../store";
 
 interface ClassRoomState {
     classRooms: ClassRoomResponse[],
@@ -28,6 +29,18 @@ const classRoomSlice = createSlice({
     reducers: {
 
     },
+    extraReducers: builder => {
+        builder.addCase(fetchClassRooms.fulfilled, (state, action) => {
+            const { data, success } = action.payload;
+            if (success) {
+                state.classRooms = data;
+                state.classRoomsLoaded = true;
+                console.log("fetchClassRooms : ", state.classRooms)
+            }
+        });
+    }
 });
 
 export default classRoomSlice.reducer;
+
+export const classRoomSelector = (state: RootState) => state.classRoomReducer;

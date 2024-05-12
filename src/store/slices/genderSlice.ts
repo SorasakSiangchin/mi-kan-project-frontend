@@ -2,6 +2,7 @@ import { GenderResponse } from "@/models/genders/genderResponse";
 import { ServiceResponse } from "@/models/serviceResponse";
 import server from "@/services/serverService";
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
+import { RootState } from "../store";
 
 interface GenderState {
     genders: GenderResponse[];
@@ -28,6 +29,19 @@ const genderSlice = createSlice({
     reducers: {
 
     },
+    extraReducers: builder => {
+        builder.addCase(fetchGenders.fulfilled, (state, action) => {
+            const { data, success } = action.payload;
+            if (success) {
+                state.genders = data;
+                state.gendersLoaded = true;
+                console.log("fetchGenders : ", state.genders)
+
+            }
+        });
+    }
 });
 
 export default genderSlice.reducer;
+
+export const useGenderSelector = (state: RootState) => state.genderReducer

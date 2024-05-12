@@ -2,6 +2,7 @@ import { SchoolYearResponse } from "@/models/schoolYears/schoolYearResponse";
 import { ServiceResponse } from "@/models/serviceResponse";
 import server from "@/services/serverService";
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
+import { RootState } from "../store";
 
 interface SchoolYearState {
     schoolYears: SchoolYearResponse[],
@@ -28,6 +29,18 @@ const schoolYeasSlice = createSlice({
     reducers: {
 
     },
+    extraReducers: builder => {
+        builder.addCase(fetchSchoolYears.fulfilled, (state, action) => {
+            const { data, success } = action.payload;
+            if (success) {
+                state.schoolYears = data;
+                state.schoolYearsLoaded = true;
+                console.log("fetchSchoolYears : ", state.schoolYears)
+
+            }
+        });
+    }
 });
 
 export default schoolYeasSlice.reducer;
+export const useSchoolYearsSelector = (state: RootState) => state.schoolYearReducer;

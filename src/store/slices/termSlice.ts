@@ -2,6 +2,7 @@ import { ServiceResponse } from "@/models/serviceResponse";
 import { TermResponse } from "@/models/terms/termResponse";
 import server from "@/services/serverService";
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
+import { RootState } from "../store";
 
 interface TermState {
     terms: TermResponse[],
@@ -28,6 +29,18 @@ const termSlice = createSlice({
     reducers: {
 
     },
+    extraReducers: builder => {
+        builder.addCase(fetchTerms.fulfilled, (state, action) => {
+            const { data, success } = action.payload;
+            if (success) {
+                state.terms = data;
+                state.termsLoaded = true;
+                console.log("fetchTerms : ", state.terms)
+
+            }
+        });
+    }
 });
 
 export default termSlice.reducer;
+export const useTermSelector = (state: RootState) => state.termReducer

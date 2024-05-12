@@ -6,19 +6,30 @@ import { Visibility, VisibilityOff } from '@mui/icons-material'
 import * as Yup from "yup";
 import { Controller, useForm } from 'react-hook-form';
 import { yupResolver } from "@hookform/resolvers/yup";
+import { LoginRequest } from '@/models/terms/loginRequest';
+import { useAppDispatch } from '@/store/store';
+import { login } from '@/store/slices/userSlice';
+import { useRouter } from 'next/navigation';
+
+const emailValidation = /^[a-zA-Z0-9_\\.]+@[a-zA-Z]+\.[a-zA-Z0-9\\.]+$/;
 
 const formValidateSchema = Yup.object().shape({
-  username: Yup.string().required("กรุณากรอกชื่อผู้ใช้งาน").trim(),
-  password: Yup.string().required("กรุณากรอกรหัสผ่าน").trim(),
+  email: Yup
+    .string()
+    .required("กรุณากรอกอีเมล")
+    .matches(emailValidation, "รูปแบบผู้ใช้งานไม่ถูกต้อง")
+    .trim(),
+  password: Yup
+    .string()
+    .required("กรุณากรอกรหัสผ่าน")
+    .trim(),
 });
-
-interface UserLogin {
-  username: string;
-  password: string;
-}
 
 const LoginPage = () => {
   const isMobile = useMediaQuery('(max-width:600px)');
+
+  const dispatch = useAppDispatch();
+  const route = useRouter();
 
   const [showPassword, setShowPassword] = useState(false);
 
@@ -28,16 +39,24 @@ const LoginPage = () => {
     event.preventDefault()
   };
 
-  const defaultValues: UserLogin = { username: "", password: "" };
+  const defaultValues: LoginRequest = { email: "", password: "" };
 
   const {
     control,
     handleSubmit,
     formState: { errors },
-  } = useForm<UserLogin>({
+  } = useForm<LoginRequest>({
     defaultValues,
     resolver: yupResolver(formValidateSchema),
   });
+
+  const onSubmit = handleSubmit(
+    async (value) => {
+      const result = await dispatch(login(value))
+      if (login.fulfilled.match(result)) {
+        route.push("/home");
+      }
+    });
 
   return (
     <div className="flex flex-col h-screen justify-center items-center">
@@ -59,26 +78,26 @@ const LoginPage = () => {
             mt: 5
           }}
         >
-          <form onSubmit={handleSubmit((value) => {
-            console.log("value : ", value)
-          })} method="POST">
+          <form
+            onSubmit={onSubmit}
+            method="POST"
+          >
             <CardContent>
               <Grid container rowSpacing={4}>
                 <Grid item xs={12}>
                   <Controller
                     control={control}
-                    name='username'
+                    name='email'
                     render={({ field }) => {
                       return <FormControl
                         {...field}
                         // disabled={(errors.username?.message ?? "") != ""}
-                        error={(errors.username?.message ?? "") != ""}
+                        error={(errors.email?.message ?? "") != ""}
                         className="w-full"
                         variant="outlined"
                       >
                         <FormLabel
                           htmlFor="input-username"
-                        // className={classFontStyle}
                         >
                           ชื่อผู้ใช้ระบบ
                         </FormLabel>
@@ -88,7 +107,7 @@ const LoginPage = () => {
                           className="w-full"
                         />
                         <FormHelperText>
-                          {errors.username?.message?.toString()}
+                          {errors.email?.message?.toString()}
                         </FormHelperText>
                       </FormControl>
                     }}

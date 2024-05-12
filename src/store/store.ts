@@ -7,6 +7,7 @@ import genderReducer from "./slices/genderSlice";
 import schoolReducer from "./slices/schoolSlice";
 import schoolYearReducer from "./slices/schoolYearSlice";
 import termReducer from "./slices/termSlice";
+import userReducer from "./slices/userSlice";
 
 const reducer = {
     studentReducer,
@@ -15,7 +16,8 @@ const reducer = {
     genderReducer,
     schoolReducer,
     schoolYearReducer,
-    termReducer
+    termReducer,
+    userReducer
 };
 
 export const store = configureStore({

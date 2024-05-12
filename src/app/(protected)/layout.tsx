@@ -5,6 +5,9 @@ import Sidebar from '@/components/layout/Sidebar';
 import { Box, styled } from '@mui/material';
 import React, { useState } from 'react'
 import CssBaseline from '@mui/material/CssBaseline';
+import { Inter } from 'next/font/google';
+
+const inter = Inter({ subsets: ["latin"] });
 
 const drawerWidth = 240;
 
@@ -53,7 +56,7 @@ const RootLayout = ({
 
     return (
         <html lang="en">
-            <body>
+            <body className={inter.className}>
                 <Box sx={{ display: 'flex' }}>
                     <CssBaseline />
                     <Header open={open} handleDrawerOpen={handleDrawerOpen} />

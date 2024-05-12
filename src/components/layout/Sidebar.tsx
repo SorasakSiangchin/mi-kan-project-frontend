@@ -66,8 +66,10 @@ const Sidebar: FC<Props> = ({ handleDrawerClose, open }) => {
             open={open}
         >
             <DrawerHeader>
-                <Box className="w-full m-2">
-                    <img src="/static/img/logo-mi.png" alt="img-logo" className='mx-auto' width={50} height={50} />
+                <Box className="w-full m-2  ">
+                    <Box className="flex justify-center">
+                        <img src="/static/img/logo-mi.png" alt="img-logo" className='' width={50} height={50} />
+                    </Box>
                     <Typography className='text-center'>
                         พหุปัญญา
                     </Typography>

@@ -2,6 +2,7 @@ import { SchoolResponse } from "@/models/schools/schoolResponse";
 import { ServiceResponse } from "@/models/serviceResponse";
 import server from "@/services/serverService";
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
+import { RootState } from "../store";
 
 interface SchoolState {
     schools: SchoolResponse[],
@@ -28,6 +29,18 @@ const schoolSlice = createSlice({
     reducers: {
 
     },
+    extraReducers: builder => {
+        builder.addCase(fetchSchools.fulfilled, (state, action) => {
+            const { data, success } = action.payload;
+            if (success) {
+                state.schools = data;
+                state.schoolsLoaded = true;
+                console.log("fetchSchools : ", state.schools)
+
+            }
+        });
+    }
 });
 
 export default schoolSlice.reducer;
+export const useSchoolSelector = (state: RootState) => state.schoolReducer

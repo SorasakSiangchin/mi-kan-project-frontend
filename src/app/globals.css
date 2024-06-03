@@ -135,3 +135,7 @@ code {
 .swal2-container {
   z-index: 100000;
 }
+
+.swal2-custom-font {
+  font-family: 'Kanit', sans-serif !important;
+}

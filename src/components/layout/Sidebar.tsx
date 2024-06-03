@@ -1,13 +1,12 @@
-"use client"
-
+"use client";;
 import { Drawer, IconButton, Divider, List, ListItem, ListItemButton, ListItemIcon, ListItemText, styled, useTheme, Box, Typography } from '@mui/material'
-import React, { FC } from 'react'
+import { FC } from 'react';
 import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';
 import ChevronRightIcon from '@mui/icons-material/ChevronRight';
-import LogoutIcon from '@mui/icons-material/Logout';
 import HomeIcon from '@mui/icons-material/Home';
 import PeopleAltIcon from '@mui/icons-material/PeopleAlt';
 import Person4Icon from '@mui/icons-material/Person4';
+
 const drawerWidth = 240;
 
 type Props = {
@@ -49,6 +48,7 @@ const datas: {
     ]
 
 const Sidebar: FC<Props> = ({ handleDrawerClose, open }) => {
+
     const theme = useTheme();
 
     return (
@@ -90,18 +90,6 @@ const Sidebar: FC<Props> = ({ handleDrawerClose, open }) => {
                         </ListItemButton>
                     </ListItem>
                 ))}
-            </List>
-            <Divider />
-            <List>
-
-                <ListItem disablePadding>
-                    <ListItemButton>
-                        <ListItemIcon>
-                            <LogoutIcon />
-                        </ListItemIcon>
-                        <ListItemText primary={"ออกจากระบบ"} />
-                    </ListItemButton>
-                </ListItem>
             </List>
         </Drawer>
     )

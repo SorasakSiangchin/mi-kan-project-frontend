@@ -294,10 +294,6 @@ const HomePage = () => {
         return () => { root.dispose() };
     }, []);
 
-    // Set themes
-    // https://www.amcharts.com/docs/v5/concepts/themes/
-
-
     return (
         <Box sx={{ width: "100%" }}>
             <Typography className='text-center' variant='h6'>

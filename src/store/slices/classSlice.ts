@@ -17,6 +17,7 @@ const initialState: ClassState = {
 export const fetchClasses = createAsyncThunk<ServiceResponse<ClassResponse[]>>
     ("class/fetchClasses", async () => {
         try {
+            //await new Promise((resolve) => setTimeout(resolve, 3000));
             return await server.classes.getClasses();
         } catch (error) {
             console.log("error : ", error);
@@ -35,7 +36,7 @@ const classSlice = createSlice({
             if (success) {
                 state.classes = data;
                 state.classesLoaded = true;
-                console.log("fetchClasses : ", state.classes)
+                // console.log("fetchClasses : ", state.classes)
             }
         });
     }

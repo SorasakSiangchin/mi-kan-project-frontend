@@ -35,7 +35,7 @@ const classRoomSlice = createSlice({
             if (success) {
                 state.classRooms = data;
                 state.classRoomsLoaded = true;
-                console.log("fetchClassRooms : ", state.classRooms)
+                //console.log("fetchClassRooms : ", state.classRooms)
             }
         });
     }
@@ -43,4 +43,4 @@ const classRoomSlice = createSlice({
 
 export default classRoomSlice.reducer;
 
-export const classRoomSelector = (state: RootState) => state.classRoomReducer;
+export const useClassRoomSelector = (state: RootState) => state.classRoomReducer;

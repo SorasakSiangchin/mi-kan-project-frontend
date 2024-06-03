@@ -1,5 +1,6 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 "use client";
+
 import { Autocomplete, Box, Button, Grid, Paper, TextField, Typography } from "@mui/material"
 import SaveIcon from '@mui/icons-material/Save';
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
@@ -8,7 +9,7 @@ import InputAdornment from '@mui/material/InputAdornment';
 import PhoneIcon from '@mui/icons-material/Phone';
 import { styled } from '@mui/material/styles';
 import CloudUploadIcon from '@mui/icons-material/CloudUpload';
-import { useCallback, useState } from "react";
+import { FC, useCallback, useEffect, useState } from "react";
 import Image from "next/image";
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
@@ -23,12 +24,18 @@ import useSchoolYear from "@/hooks/useSchoolYear";
 import useTerm from "@/hooks/useTerm";
 import { findMatchOptionAutocompleteSingle, formatDateForMUIDatePicker } from "@/utils/util";
 import { useAppDispatch } from "@/store/store";
-import { createStudent } from "@/store/slices/studentSlice";
+import { createStudent, getStudentById, refresh, updateStudent } from "@/store/slices/studentSlice";
 import { StudentCreate } from "@/models/students/studentCreate";
 import dayjs from "dayjs";
 import Swal from "sweetalert2";
+import { yupResolver } from "@hookform/resolvers/yup";
+import { AddStudentValidate } from "./FormStudentValidate";
+import { StudentResponse } from "@/models/students/studentResponse";
+import { productImageURL } from "@/utils/commonUtil";
+import { StudentUpdate } from "@/models/students/studentUpdate";
 
-interface IInput {
+export interface IInput {
+    id?: string;
     firstName: string;
     lastName: string;
     imageFiles: any[];
@@ -47,11 +54,44 @@ interface IInput {
     genderId: string;
 }
 
-const AddStudentPage = () => {
+type Props = {
+    id: string | undefined
+}
+
+const FormStudentPage: FC<Props> = ({
+    id
+}) => {
 
     const route = useRouter();
     const dispatch = useAppDispatch();
     const [imageUrl, setImageUrl] = useState<string>("");
+    const [student, setStudent] = useState<StudentResponse | null>(null);
+
+    const initValues: IInput = {
+        firstName: "",
+        lastName: "",
+        phoneNumber: "",
+        address: "",
+        birthday: dayjs(),
+        classId: "",
+        classRoomId: "",
+        email: "",
+        genderId: "",
+        hobby: "",
+        idCard: "",
+        imageFiles: [],
+        religion: "",
+        schoolId: "",
+        schoolYearId: "",
+        termId: "",
+    };
+
+    const { control, formState: { errors }, handleSubmit, setValue } = useForm<IInput>({
+        defaultValues: initValues,
+        //@ts-ignore
+        resolver: yupResolver(AddStudentValidate)
+    });
+
 
     const VisuallyHiddenInput = styled('input')({
         clip: 'rect(0 0 0 0)',
@@ -65,38 +105,58 @@ const AddStudentPage = () => {
         width: 1
     });
 
-    const styleDrop: React.CSSProperties = {
-        border: '2px dashed #000',
-        padding: 20,
-        textAlign: 'center',
-        cursor: 'pointer',
-        background: '#eee'
-    };
+    const loadStudent = async (studentId: string) => {
+        const { data } =
+            await dispatch(getStudentById(studentId)).unwrap();
+        setStudent(data);
+        let student: IInput = {
+            id: data.id,
+            firstName: data.firstName,
+            lastName: data.lastName,
+            phoneNumber: data.phoneNumber,
+            address: data.address,
+            birthday: dayjs(data.birthday),
+            classId: data.classId,
+            classRoomId: data.classRoomId,
+            email: data.email,
+            genderId: data.genderId,
+            hobby: data.hobby,
+            imageFiles: [],
+            idCard: data.idCard,
+            religion: data.religion,
+            schoolId: data.schoolId,
+            schoolYearId: data.schoolYearId,
+            termId: data.termId
+        };
+        for (const key in student)
+            setValue(key as keyof typeof student, student[key as keyof typeof student])
 
-    const initValues: IInput = {
-        firstName: "firstName",
-        lastName: "lastName",
-        phoneNumber: "0616032203",
-        address: "address",
-        birthday: dayjs("05/18/2024"),
-        classId: "1124CF5A-6D96-4A05-844C-8A3A80C8E81C".toLowerCase(),
-        classRoomId: "CF7E4C43-1C38-4251-9B68-D319EB963D19".toLowerCase(),
-        email: "email@gmail.com",
-        genderId: "99EA90E8-C8EF-45E2-86F4-0CE3DF6660E1".toLowerCase(),
-        hobby: "hobby ",
-        idCard: "1111111111111",
-        imageFiles: [],
-        religion: "religion",
-        schoolId: "C3E93BA4-C4EF-40A5-8D1B-CC80F6DC8CF6".toLowerCase(),
-        schoolYearId: "6122DB77-715B-45FC-B1CF-255B06D53549".toLowerCase(),
-        termId: "8FA58D00-5C34-4263-BD44-4961D04A8A52".toLowerCase()
-    };
+    }
 
-    const { control, formState: { errors }, handleSubmit, setValue } = useForm<IInput>({
-        defaultValues: initValues,
-        //@ts-ignore
-        //resolver: yupResolver(AddStudentValidate)
-    });
+    useEffect(() => {
+        if (id) loadStudent(id)
+    }, [id, dispatch]);
+
+
+    // const initValues: IInput = {
+    //     firstName: "firstName",
+    //     lastName: "lastName",
+    //     phoneNumber: "0616032203",
+    //     address: "address",
+    //     birthday: dayjs("05/18/2024"),
+    //     classId: "1124CF5A-6D96-4A05-844C-8A3A80C8E81C".toLowerCase(),
+    //     classRoomId: "CF7E4C43-1C38-4251-9B68-D319EB963D19".toLowerCase(),
+    //     email: "email@gmail.com",
+    //     genderId: "99EA90E8-C8EF-45E2-86F4-0CE3DF6660E1".toLowerCase(),
+    //     hobby: "hobby ",
+    //     idCard: "1111111111111",
+    //     imageFiles: [],
+    //     religion: "religion",
+    //     schoolId: "C3E93BA4-C4EF-40A5-8D1B-CC80F6DC8CF6".toLowerCase(),
+    //     schoolYearId: "6122DB77-715B-45FC-B1CF-255B06D53549".toLowerCase(),
+    //     termId: "8FA58D00-5C34-4263-BD44-4961D04A8A52".toLowerCase()
+    // };
+
 
     const onFileUpload = (file: File | null) => {
         if (file) setValue('imageFiles', [file]);
@@ -117,23 +177,28 @@ const AddStudentPage = () => {
 
     const { classes, classesLoaded } = useClass();
     const { classRooms, classRoomsLoaded } = useClassRoom();
+    const { schoolYears, schoolYearsLoaded } = useSchoolYear();
     const { genders, gendersLoaded } = useGender();
     const { schools, schoolsLoaded } = useSchool();
-    const { schoolYears, schoolYearsLoaded } = useSchoolYear();
     const { terms, termsLoaded } = useTerm();
 
     const onSubmit = handleSubmit(async (value) => {
-        value.birthday = formatDateForMUIDatePicker(new Date(value.birthday));
+        let result: any;
+        if (!id) result = await onCreateStudent(value);
+        else result = await onUpdateStudent(value);
 
-        const result = await dispatch(createStudent(value as StudentCreate));
-        if (createStudent.fulfilled.match(result)) {
+        // console.log(result);
+        if (result.success === true) {
             Swal.fire({
                 position: "center",
                 icon: "success",
                 title: 'บันทึกข้อมูลสำเร็จ',
                 showConfirmButton: false,
                 timer: 1500
-            }).then(() => route.push("/student"));
+            }).then(() => {
+                dispatch(refresh());
+                route.push("/student");
+            });
         } else {
             Swal.fire({
                 position: "center",
@@ -145,13 +210,27 @@ const AddStudentPage = () => {
         }
     });
 
+    const onCreateStudent = async (value: IInput) => {
+        value.birthday = formatDateForMUIDatePicker(new Date(value.birthday));
+        const result = await dispatch(createStudent(value as StudentCreate)).unwrap();
+
+        return result;
+    }
+
+    const onUpdateStudent = async (value: IInput) => {
+        value.birthday = formatDateForMUIDatePicker(new Date(value.birthday));
+        const result = await dispatch(updateStudent({ ...value, id: student?.id } as StudentUpdate)).unwrap();
+
+        return result;
+    }
+
     return (
         <Box className="w-full">
             <form onSubmit={onSubmit}>
                 <Box className="flex flex-row justify-between mb-4">
                     <Box>
                         <Typography variant="h5">
-                            เพิ่มข้อมูลนักเรียน
+                            {!student ? "เพิ่มข้อมูลนักเรียน" : "แก้ไขข้อมูลนักเรียน"}
                         </Typography>
                     </Box>
                     <Box className="flex gap-2">
@@ -513,14 +592,7 @@ const AddStudentPage = () => {
                         </Typography>
                     </Grid>
                     <Grid item xs={12} sm={9} md={9}>
-                        {
-                            imageUrl ?
-                                <Box className="flex justify-start">
-                                    <Paper style={styleDrop} variant='outlined'>
-                                        <Image src={imageUrl} width={250} height={300} alt="image-student" />
-                                    </Paper>
-                                </Box> : ""
-                        }
+                        <ShowImage imageUrl={imageUrl} student={student} />
                     </Grid>
                 </Grid>
             </form>
@@ -528,4 +600,36 @@ const AddStudentPage = () => {
     )
 }
 
-export default AddStudentPage
+export default FormStudentPage
+
+const ShowImage = ({ imageUrl, student }: { imageUrl: string, student: StudentResponse | null }) => {
+    const styleDrop: React.CSSProperties = {
+        border: '2px dashed #000',
+        padding: 20,
+        textAlign: 'center',
+        cursor: 'pointer',
+        background: '#eee'
+    };
+
+    if (imageUrl) {
+        return <Box className="flex justify-start">
+            <Paper style={styleDrop} variant='outlined'>
+                <Image src={imageUrl} width={250} height={300} alt="image-student" />
+            </Paper>
+        </Box>
+    }
+    else {
+        if (student) {
+            return <Box className="flex justify-start">
+
+                {student.imageUrl ? <Paper style={styleDrop} variant='outlined'>
+                    <Image src={productImageURL(student.imageUrl)} width={250} height={300} alt="image-student" />
+                </Paper> : ""}
+
+            </Box>
+        }
+        else {
+            return;
+        }
+    }
+}

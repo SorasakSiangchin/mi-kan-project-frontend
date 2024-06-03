@@ -34,6 +34,7 @@ const post = async (
   // handle error
   if (!response.ok) {
     handleError({ endPoint, response });
+    throw new Error(response.text.toString());
   }
 
   try {
@@ -69,6 +70,7 @@ const put = async (
   // handle error
   if (!response.ok) {
     handleError({ endPoint, response });
+    throw new Error(response.text.toString());
   }
 
   try {
@@ -97,6 +99,7 @@ const get = async (
   // handle error
   if (!response.ok) {
     handleError({ endPoint, response });
+    throw new Error(response.text.toString());
   }
 
   try {
@@ -125,6 +128,7 @@ const del = async (
   // handle error
   if (!response.ok) {
     handleError({ endPoint, response });
+    throw new Error(response.text.toString());
   }
 
   try {

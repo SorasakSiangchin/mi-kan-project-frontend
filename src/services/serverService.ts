@@ -1,6 +1,6 @@
 import fetchInterceptor from "@/utils/fetchInterceptor";
 
-function createFormData(item: any) {
+export function createFormData(item: any) {
     let formData = new FormData();
     for (const key in item) {
         formData.append(key, item[key]);
@@ -13,8 +13,11 @@ function createFormData(item: any) {
 };
 
 const students = {
+    getStudentById: async (id: any) => await fetchInterceptor.get(`Student/${id}`),
+    getStudents: async (value: any) => await fetchInterceptor.post("Student/GetStudents", value),
     createStudent: async (value: any) => await fetchInterceptor.post("Student/CreateStudent", createFormData(value)),
     updateStudent: async (value: any) => await fetchInterceptor.post("Student/UpdateStudent", createFormData(value))
+
 }
 
 const classRooms = {
@@ -42,8 +45,15 @@ const terms = {
 }
 
 const user = {
-    login: async (value: any) => await fetchInterceptor.post("User/Login", createFormData(value)),
-    register: async (value: any) => await fetchInterceptor.post("User/Register", createFormData(value))
+    login: async (value: any): Promise<any> => await fetchInterceptor.post("auth/login", value, {
+        baseURL: process.env.NEXT_PUBLIC_BASE_URL_LOCAL_API,
+    }),
+    logout: async (): Promise<any> => await fetchInterceptor.post("auth/logout", {}, {
+        baseURL: process.env.NEXT_PUBLIC_BASE_URL_LOCAL_API,
+    }),
+    register: async (value: any) => await fetchInterceptor.post("User/Register", createFormData(value)),
+    getInfo: async () => await fetchInterceptor.get("User/Info")
+
 }
 
 const server = {

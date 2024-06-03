@@ -1,15 +1,19 @@
 "use client"
 
-import { Box, Button, Card, CardContent, FormControl, FormHelperText, FormLabel, Grid, IconButton, InputAdornment, OutlinedInput, Typography, useMediaQuery } from '@mui/material'
+import { Box, Button, Card, CardContent, CircularProgress, FormControl, FormHelperText, FormLabel, Grid, IconButton, InputAdornment, OutlinedInput, Typography, useMediaQuery } from '@mui/material'
 import React, { useState } from "react";
 import { Visibility, VisibilityOff } from '@mui/icons-material'
 import * as Yup from "yup";
 import { Controller, useForm } from 'react-hook-form';
 import { yupResolver } from "@hookform/resolvers/yup";
-import { LoginRequest } from '@/models/terms/loginRequest';
 import { useAppDispatch } from '@/store/store';
-import { login } from '@/store/slices/userSlice';
+import { login, userSelector } from '@/store/slices/userSlice';
 import { useRouter } from 'next/navigation';
+import Swal from 'sweetalert2';
+import Link from 'next/link';
+import { LoginRequest } from '@/models/user/loginRequest';
+import { useSelector } from 'react-redux';
+import LoginIcon from '@mui/icons-material/Login';
 
 const emailValidation = /^[a-zA-Z0-9_\\.]+@[a-zA-Z]+\.[a-zA-Z0-9\\.]+$/;
 
@@ -29,6 +33,7 @@ const LoginPage = () => {
   const isMobile = useMediaQuery('(max-width:600px)');
 
   const dispatch = useAppDispatch();
+  const { loginLoaded } = useSelector(userSelector);
   const route = useRouter();
 
   const [showPassword, setShowPassword] = useState(false);
@@ -52,9 +57,27 @@ const LoginPage = () => {
 
   const onSubmit = handleSubmit(
     async (value) => {
-      const result = await dispatch(login(value))
+      const result = await dispatch(login(value));
       if (login.fulfilled.match(result)) {
-        route.push("/home");
+        Swal.fire({
+          position: "center",
+          icon: "success",
+          title: "ยินดีต้อนรับ",
+          showConfirmButton: false,
+          timer: 1500,
+          customClass: {
+            container: 'swal2-custom-font'
+          }
+        }).then(() => route.push("/home"));
+      } else {
+        Swal.fire({
+          icon: "error",
+          title: "อีเมลหรือรหัสผ่านไม่ถูกต้อง",
+          text: "กรุณาลองใหม่อีกครั้ง",
+          customClass: {
+            container: 'swal2-custom-font'
+          }
+        });
       }
     });
 
@@ -157,20 +180,25 @@ const LoginPage = () => {
                 </Grid>
               </Grid>
               <Button
-                disabled={false}
+                disabled={loginLoaded}
                 type="submit"
                 variant="contained"
-                //   endIcon={
-                //     loginLoaded ? (
-                //       <CircularProgress size={15} color="inherit" />
-                //     ) : (
-                //       <LoginIcon />
-                //     )
-                //   }
+                endIcon={
+                  loginLoaded ? (
+                    <CircularProgress size={15} color="inherit" />
+                  ) : (
+                    <LoginIcon />
+                  )
+                }
                 className={`mt-3 w-full`}
               >
                 เข้าสู่ระบบ
               </Button>
+              <Link className='text-center text-blue-500 underline' href={"/register"}>
+                <Typography variant='body2' >
+                  สมัครสมาชิก
+                </Typography>
+              </Link>
             </CardContent>
           </form>
         </Card>

@@ -6,13 +6,14 @@ import { StudentCreate } from "@/models/students/studentCreate";
 import { StudentParams } from "@/models/students/studentParams";
 import { StudentResponse } from "@/models/students/studentResponse";
 import { StudentUpdate } from "@/models/students/studentUpdate";
-import { getUserFromSession } from "@/bil/auth";
 
 interface StudentState {
     createStudentLoaded: boolean;
     students: StudentResponse[];
     studentsLoaded: boolean;
     studentParams: StudentParams;
+    studentAll: StudentResponse[];
+    studentAllLoaded: boolean;
 }
 
 
@@ -34,7 +35,9 @@ const initialState: StudentState = {
     createStudentLoaded: false,
     studentParams: initParams(),
     students: [],
-    studentsLoaded: false
+    studentsLoaded: false,
+    studentAll: [],
+    studentAllLoaded: false
 }
 
 export const createStudent = createAsyncThunk<ServiceResponse<StudentResponse[]>, StudentCreate>("student/createStudent",
@@ -68,6 +71,19 @@ export const getStudents = createAsyncThunk<ServiceResponse<any>, string, { stat
         const param = ThunkAPI.getState().studentReducer.studentParams;
         try {
             return await server.students.getStudents(param);
+        } catch (error) {
+            console.log("error : ", error);
+        }
+    })
+
+export const getStudentAll = createAsyncThunk<ServiceResponse<StudentResponse[]>, string>
+    ("student/getStudentAll", async (schoolId) => {
+        try {
+            const result = await server.students.getStudentAll(schoolId);
+
+            console.log("result : ", result);
+
+            return result;
         } catch (error) {
             console.log("error : ", error);
         }
@@ -108,6 +124,19 @@ const studentSlice = createSlice({
                 state.students = data;
                 state.studentsLoaded = true;
             }
+        });
+
+        builder.addCase(getStudentAll.fulfilled, (state, action) => {
+            const { data, success } = action.payload;
+            if (success) {
+                state.studentAll = data;
+                state.studentAllLoaded = true;
+            }
+        })
+
+        builder.addCase(getStudentAll.rejected, (state) => {
+            state.studentAll = [];
+            state.studentAllLoaded = true;
         })
     }
 });

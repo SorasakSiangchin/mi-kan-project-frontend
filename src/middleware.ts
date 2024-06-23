@@ -35,5 +35,8 @@ export const config = {
         "/login/:path*",
         "/register/:path*",
         "/home/:path*",
+        "/ability/:path*",
+        "/profile/:path*",
+        "/student/:path*"
     ],
 };

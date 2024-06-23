@@ -5,6 +5,7 @@ const phoneRegExp = /^((\\+[1-9]{1,4}[ \\-]*)|(\\([0-9]{2,3}\\)[ \\-]*)|([0-9]{2
 
 export const AddStudentValidate = Yup.object().shape({
     firstName: Yup.string().required("กรุณากรอกชื่อจริง"),
+    title: Yup.string().required("กรุณาเลือกคำนำหน้านาม"),
     lastName: Yup.string().required("กรุณากรอกนามสกุล"),
     phoneNumber: Yup.string().required("กรุณากรอกเบอร์โทรศัพท์").matches(phoneRegExp, 'หมายเลขโทรศัพท์ไม่ถูกต้อง'),
     address: Yup.string().required("กรุณากรอกที่อยู่"),

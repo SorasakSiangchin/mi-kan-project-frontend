@@ -10,9 +10,7 @@ export const findMatchOptionAutocompleteSingle = <T>(item: Array<T>, selectedVal
     else newT = selectedValue as T;
 
     return newT;
-
 }
-
 
 export function formatDateForMUIDatePicker(date: any) {
     const year = date.getFullYear();
@@ -26,3 +24,5 @@ export function formatDateForMUIDatePicker(date: any) {
         day: '2-digit',
     })
 }
+
+export const screenWidth = "90rem";

@@ -7,8 +7,10 @@ import { TermResponse } from "../terms/termResponse";
 
 export interface StudentResponse {
     id: string;
+    title?: string;
     firstName: string;
     lastName: string;
+    fullName: string;
     imageUrl: string;
     birthday: Date;
     email: string;

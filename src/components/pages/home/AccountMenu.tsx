@@ -1,5 +1,4 @@
-"use client"
-
+"use client";
 import Box from '@mui/material/Box';
 import Avatar from '@mui/material/Avatar';
 import Menu from '@mui/material/Menu';
@@ -7,8 +6,6 @@ import MenuItem from '@mui/material/MenuItem';
 import ListItemIcon from '@mui/material/ListItemIcon';
 import Divider from '@mui/material/Divider';
 import IconButton from '@mui/material/IconButton';
-import PersonAdd from '@mui/icons-material/PersonAdd';
-import Settings from '@mui/icons-material/Settings';
 import Logout from '@mui/icons-material/Logout';
 import React, { FC } from 'react'
 import { UserResponse } from '@/models/user/userResponse';
@@ -18,7 +15,9 @@ import { logout, userSelector } from '@/store/slices/userSlice';
 import PersonIcon from '@mui/icons-material/Person';
 import Swal from 'sweetalert2';
 import { useSelector } from 'react-redux';
-import { Backdrop, CircularProgress } from '@mui/material';
+import { Backdrop, CircularProgress, Tooltip } from '@mui/material';
+import { RoleCodeData } from '@/utils/constant';
+import AdminPanelSettingsIcon from '@mui/icons-material/AdminPanelSettings';
 
 const AccountMenu: FC<{ userInfo: UserResponse }> = ({ userInfo }) => {
 
@@ -67,6 +66,14 @@ const AccountMenu: FC<{ userInfo: UserResponse }> = ({ userInfo }) => {
     const lastNameInitial = userInfo.lastName.charAt(0);
 
     const fullName = `${userInfo.firstName} ${userInfo.lastName}`;
+
+    const adminIcon = <Tooltip title="Admin">
+        <AdminPanelSettingsIcon fontSize="small" />
+    </Tooltip>
+
+    const userIcon = <Tooltip title="Teacher">
+        <PersonIcon fontSize="small" />
+    </Tooltip>
 
     return (
         <Box className="ml-auto" >
@@ -123,9 +130,9 @@ const AccountMenu: FC<{ userInfo: UserResponse }> = ({ userInfo }) => {
                 transformOrigin={{ horizontal: 'right', vertical: 'top' }}
                 anchorOrigin={{ horizontal: 'right', vertical: 'bottom' }}
             >
-                <MenuItem >
+                <MenuItem onClick={() => router.push("/profile")} >
                     <ListItemIcon>
-                        <PersonIcon fontSize="small" />
+                        {userInfo.role.roleCode === RoleCodeData.ADMIN ? adminIcon : userIcon}
                     </ListItemIcon>
                     {fullName}
                 </MenuItem>

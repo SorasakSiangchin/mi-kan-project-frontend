@@ -1,6 +1,6 @@
 "use client"
 
-import { Autocomplete, Box, Button, Card, FormControl, FormHelperText, FormLabel, Grid, IconButton, InputAdornment, OutlinedInput, Paper, TextField, Typography, styled, useMediaQuery } from '@mui/material'
+import { Autocomplete, Box, Button, Card, CircularProgress, FormControl, FormHelperText, FormLabel, Grid, IconButton, InputAdornment, OutlinedInput, Paper, TextField, Typography, styled, useMediaQuery } from '@mui/material'
 import React, { useCallback, useState } from 'react';
 import { Controller, useForm } from 'react-hook-form';
 import CloudUploadIcon from '@mui/icons-material/CloudUpload';
@@ -12,9 +12,10 @@ import { useRouter } from 'next/navigation';
 import { Visibility, VisibilityOff } from '@mui/icons-material';
 import Image from 'next/image';
 import { useAppDispatch } from '@/store/store';
-import { register } from '@/store/slices/userSlice';
+import { register, userSelector } from '@/store/slices/userSlice';
 import { RegisterRequest } from '@/models/user/registerRequest';
 import Swal from 'sweetalert2';
+import { useSelector } from 'react-redux';
 
 interface IInput {
     firstName: string;
@@ -29,6 +30,8 @@ interface IInput {
 const RegisterPage = () => {
 
     const dispatch = useAppDispatch();
+
+    const { registerLoaded } = useSelector(userSelector);
 
     const isMobile = useMediaQuery('(max-width:600px)');
 
@@ -150,6 +153,12 @@ const RegisterPage = () => {
                                 กลับ
                             </Button>
                             <Button
+                                disabled={registerLoaded}
+                                endIcon={
+                                    registerLoaded ? (
+                                        <CircularProgress size={15} color="inherit" />
+                                    ) : ""
+                                }
                                 type="submit"
                                 variant="contained"
                                 color="primary"

@@ -61,7 +61,7 @@ const RootLayout = ({
                     <CssBaseline />
                     <Header open={open} handleDrawerOpen={handleDrawerOpen} />
                     <Sidebar open={open} handleDrawerClose={handleDrawerClose} />
-                    <Main open={open}>
+                    <Main open={open} sx={{ flexGrow: 1, p: 3 }}>
                         <DrawerHeader />
                         {children}
                     </Main>

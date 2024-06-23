@@ -56,6 +56,13 @@ const Header: FC<Props> = ({ handleDrawerOpen, open }) => {
         <Typography variant="h6" noWrap component="div">
           ระบบบันทึกความสามารถพิเศษ
         </Typography>
+        {userInfo ?
+          userInfo.school.schoolNameTh ?
+            <Typography variant="h6" noWrap component="div" marginLeft={1}>
+              ({userInfo.school.schoolNameTh})
+            </Typography> : ""
+          : ""
+        }
         {userInfo ? <AccountMenu userInfo={userInfo} /> : ""}
       </Toolbar>
     </AppBar>

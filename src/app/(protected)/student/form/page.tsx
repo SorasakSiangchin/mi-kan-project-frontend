@@ -1,9 +1,5 @@
 
-import FormStudentPage, { IInput } from '@/components/pages/student/form/FormStudentPage';
-import { ServiceResponse } from '@/models/serviceResponse';
-import { StudentResponse } from '@/models/students/studentResponse';
-import server from '@/services/serverService';
-import dayjs from 'dayjs';
+import FormStudentPage from '@/components/pages/student/form/FormStudentPage';
 import { Metadata } from 'next';
 
 export const metadata: Metadata = {

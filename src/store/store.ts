@@ -8,6 +8,9 @@ import schoolReducer from "./slices/schoolSlice";
 import schoolYearReducer from "./slices/schoolYearSlice";
 import termReducer from "./slices/termSlice";
 import userReducer from "./slices/userSlice";
+import multipleIntelligencesReducer from "./slices/multipleIntelligencesSlice";
+import abilityReducer from "./slices/abilitySlice";
+import roleReducer from "./slices/roleSlice";
 
 const reducer = {
     studentReducer,
@@ -17,7 +20,10 @@ const reducer = {
     schoolReducer,
     schoolYearReducer,
     termReducer,
-    userReducer
+    userReducer,
+    multipleIntelligencesReducer,
+    abilityReducer,
+    roleReducer
 };
 
 export const store = configureStore({

@@ -1,5 +1,6 @@
 export interface StudentUpdate {
     id: string;
+    title?: string;
     firstName: string;
     lastName: string;
     imageFiles: File[];
@@ -16,4 +17,5 @@ export interface StudentUpdate {
     schoolYearId: string;
     termId: string;
     genderId: string;
+    isActive: boolean;
 }

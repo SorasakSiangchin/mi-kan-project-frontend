@@ -1,107 +1,80 @@
-"use client"
-
-import React, { Fragment, useLayoutEffect } from 'react'
+"use client";
+import { useEffect, useState } from 'react';
 import * as am5 from "@amcharts/amcharts5";
 import * as am5xy from "@amcharts/amcharts5/xy";
 import am5themes_Animated from "@amcharts/amcharts5/themes/Animated";
-import { Box, Divider, Typography } from '@mui/material';
+import { Box, Typography } from '@mui/material';
 import { DataGrid, GridColDef } from '@mui/x-data-grid';
+import { useSelector } from 'react-redux';
+import { fetchMultipleIntelligencesBySchoolId, useMultipleIntelligencesSelector } from '@/store/slices/multipleIntelligencesSlice';
+import { useAppDispatch } from '@/store/store';
+import { userSelector } from '@/store/slices/userSlice';
+import ReportAbilityBySchoolTable from './ReportAbilityBySchoolTable';
+import ReportAbilityBySchoolAllTable from './ReportAbilityBySchoolAllTable';
+import { RoleCodeData } from '@/utils/constant';
+import { screenWidth } from '@/utils/util';
 
-const columns: GridColDef[] = [
-    { field: 'id', headerName: 'ID', width: 70 },
-    { field: 'firstName', headerName: 'First name', width: 130 },
-    { field: 'lastName', headerName: 'Last name', width: 130 },
-    {
-        field: 'age',
-        headerName: 'Age',
-        type: 'number',
-        width: 90,
-    },
-    {
-        field: 'fullName',
-        headerName: 'Full name',
-        description: 'This column has a value getter and is not sortable.',
-        sortable: false,
-        width: 160,
-        valueGetter: (value, row) => `${row.firstName || ''} ${row.lastName || ''}`,
-    },
-];
+interface IChart {
+    name: string;
+    steps: number;
+    pictureSettings: {
+        src: string;
+    }
+}
 
-const rows = [
-    { id: 1, lastName: 'Snow', firstName: 'Jon', age: 35 },
-    { id: 2, lastName: 'Lannister', firstName: 'Cersei', age: 42 },
-    { id: 3, lastName: 'Lannister', firstName: 'Jaime', age: 45 },
-    { id: 4, lastName: 'Stark', firstName: 'Arya', age: 16 },
-    { id: 5, lastName: 'Targaryen', firstName: 'Daenerys', age: null },
-    { id: 6, lastName: 'Melisandre', firstName: null, age: 150 },
-    { id: 7, lastName: 'Clifford', firstName: 'Ferrara', age: 44 },
-    { id: 8, lastName: 'Frances', firstName: 'Rossini', age: 36 },
-    { id: 9, lastName: 'Roxie', firstName: 'Harvey', age: 65 },
-];
 
 const HomePage = () => {
 
-    useLayoutEffect(() => {
+    const dispatch = useAppDispatch();
+    const { userInfo } = useSelector(userSelector);
+    const { multipleIntelligencesBySchoolIdLoaded }
+        = useSelector(useMultipleIntelligencesSelector);
+
+    const [chartDate, setChartDate] = useState<IChart[]>([]);
+
+    const [loadedSetting, setLoadedSetting] = useState<boolean>(false);
+
+    // ดึงข้อมูล พหุปัญญา 8 ด้านพร้อมจำนวนคนที่มีความสามารถพิเศษในแต่ละด้าน
+    useEffect(() => {
+        const loadData = async () => {
+            // console.log(userInfo)
+            if (userInfo) {
+                const { data, success } = await dispatch(fetchMultipleIntelligencesBySchoolId(userInfo.schoolId ? userInfo.schoolId : "")).unwrap();
+                setLoadedSetting(false);
+                if (success) {
+                    const result = data.map((e) => {
+                        return {
+                            name: e.multipleIntelligencesName,
+                            pictureSettings: {
+                                src: ""
+                            },
+                            steps: e ? e.abilities?.length : 0
+                        } as IChart
+                    })
+                    setChartDate(result)
+                    setLoadedSetting(true);
+                } else {
+                    setChartDate([]);
+                    setLoadedSetting(true);
+                }
+            }
+        }
+
+        loadData();
+
+    }, [dispatch, multipleIntelligencesBySchoolIdLoaded, userInfo]);
+
+    useEffect(() => {
         const root = am5.Root.new("chartdiv");
 
         root._logo?.dispose();
 
-        // set theme ขแง chat
+        // set theme ของ chat
         root.setThemes([
             am5themes_Animated.new(root)
         ]);
 
-        let data = [{
-            name: "ภาษา",
-            steps: 45688,
-            pictureSettings: {
-                src: "https://www.amcharts.com/wp-content/uploads/2019/04/monica.jpg"
-            }
-        }, {
-            name: "คณิตศาสตร์",
-            steps: 35781,
-            pictureSettings: {
-                src: "https://www.amcharts.com/wp-content/uploads/2019/04/joey.jpg"
-            }
-        }, {
-            name: "ธรรมชาติวิทยา",
-            steps: 25464,
-            pictureSettings: {
-                src: "https://www.amcharts.com/wp-content/uploads/2019/04/ross.jpg"
-            }
-        }, {
-            name: "ความเข้าใจตนเอง",
-            steps: 18788,
-            pictureSettings: {
-                src: "https://www.amcharts.com/wp-content/uploads/2019/04/phoebe.jpg"
-            }
-        }, {
-            name: "ด้านมิติสัมพันธ์",
-            steps: 15465,
-            pictureSettings: {
-                src: "https://www.amcharts.com/wp-content/uploads/2019/04/rachel.jpg"
-            }
-        }, {
-            name: "ดนตรี",
-            steps: 11561,
-            pictureSettings: {
-                src: "https://www.amcharts.com/wp-content/uploads/2019/04/chandler.jpg"
-            }
-        },
-        {
-            name: "ด้านร่างกายและการเคลื่อนไหว",
-            steps: 11561,
-            pictureSettings: {
-                src: "https://www.amcharts.com/wp-content/uploads/2019/04/chandler.jpg"
-            }
-        },
-        {
-            name: "มนุษย์สัมพันธ์",
-            steps: 11561,
-            pictureSettings: {
-                src: "https://www.amcharts.com/wp-content/uploads/2019/04/chandler.jpg"
-            }
-        }];
+        // ข้อมูลที่ใช้ในการสร้างกราฟ
 
         // Create chart
         // https://www.amcharts.com/docs/v5/charts/xy-chart/
@@ -125,6 +98,7 @@ const HomePage = () => {
             minorGridEnabled: true,
             minGridDistance: 60
         });
+
         xRenderer.grid.template.set("visible", false);
 
         let xAxis = chart.xAxes.push(
@@ -271,8 +245,8 @@ const HomePage = () => {
             }
         ]);
 
-        series.data.setAll(data);
-        xAxis.data.setAll(data);
+        series.data.setAll(chartDate);
+        xAxis.data.setAll(chartDate);
 
         let cursor = chart.set("cursor", am5xy.XYCursor.new(root, {}));
         cursor.lineX.set("visible", false);
@@ -291,15 +265,18 @@ const HomePage = () => {
         // https://www.amcharts.com/docs/v5/concepts/animations/
         series.appear();
         chart.appear(1000, 100);
+
         return () => { root.dispose() };
-    }, []);
+
+    }, [loadedSetting]);
 
     return (
-        <Box sx={{ width: "100%" }}>
+        <Box sx={{ width: screenWidth }} >
             <Typography className='text-center' variant='h6'>
-                จำนวนนักเรียนที่พบแววความสามารถพิเศษในแต่ละด้าน
+                จำนวนนักเรียนที่มีความสามารถพิเศษในแต่ละด้าน
             </Typography>
-            <Box id="chartdiv"
+            <Box
+                id="chartdiv"
                 sx={{
                     width: "100%",
                     height: 500,
@@ -307,24 +284,12 @@ const HomePage = () => {
                 }}
             />
             {/* <Divider sx={{ my : 3 }}/> */}
-            <Typography variant='h5' >
-                รายชื่อโรงเรียน
-            </Typography>
-            <Box sx={{
-                height: 500,
-            }}>
-                <DataGrid
-                    rows={rows}
-                    columns={columns}
-                    initialState={{
-                        pagination: {
-                            paginationModel: { page: 0, pageSize: 5 },
-                        },
-                    }}
-                    pageSizeOptions={[5, 10]}
-                    checkboxSelection={false}
-                    rowSelection={false}
-                />
+            <Box>
+                <ReportAbilityBySchoolTable userInfo={userInfo} />
+            </Box>
+
+            <Box className="mt-10" >
+                {userInfo?.role.roleCode === RoleCodeData.ADMIN ? <ReportAbilityBySchoolAllTable userInfo={userInfo} /> : ""}
             </Box>
         </Box>
     )

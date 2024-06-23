@@ -1,4 +1,5 @@
-"use client";;
+"use client";
+
 import { Drawer, IconButton, Divider, List, ListItem, ListItemButton, ListItemIcon, ListItemText, styled, useTheme, Box, Typography } from '@mui/material'
 import { FC } from 'react';
 import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';
@@ -23,8 +24,6 @@ const DrawerHeader = styled('div')(({ theme }) => ({
     justifyContent: 'flex-end',
 }));
 
-
-
 const datas: {
     title: string;
     url: string;
@@ -41,10 +40,15 @@ const datas: {
             icon: <PeopleAltIcon />
         },
         {
-            title: "ข้อมูลคุณครู",
-            url: "/home",
-            icon: <Person4Icon />
+            title: "นักเรียนที่มีความสามารถ",
+            url: "/ability",
+            icon: <PeopleAltIcon />
         },
+        // {
+        //     title: "ข้อมูลคุณครู",
+        //     url: "/home",
+        //     icon: <Person4Icon />
+        // },
     ]
 
 const Sidebar: FC<Props> = ({ handleDrawerClose, open }) => {
@@ -66,7 +70,7 @@ const Sidebar: FC<Props> = ({ handleDrawerClose, open }) => {
             open={open}
         >
             <DrawerHeader>
-                <Box className="w-full m-2  ">
+                <Box className="w-full m-2">
                     <Box className="flex justify-center">
                         <img src="/static/img/logo-mi.png" alt="img-logo" className='' width={50} height={50} />
                     </Box>

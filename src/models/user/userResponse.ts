@@ -1,5 +1,5 @@
+import { RoleResponse } from "../roles/roleResponse";
 import { SchoolResponse } from "../schools/schoolResponse";
-import { RoleResponse } from "./roleResponse";
 
 export interface UserResponse {
     id: string;

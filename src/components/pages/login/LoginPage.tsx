@@ -14,6 +14,7 @@ import Link from 'next/link';
 import { LoginRequest } from '@/models/user/loginRequest';
 import { useSelector } from 'react-redux';
 import LoginIcon from '@mui/icons-material/Login';
+import ForgotPasswordDialog from './ForgotPasswordDialog';
 
 const emailValidation = /^[a-zA-Z0-9_\\.]+@[a-zA-Z]+\.[a-zA-Z0-9\\.]+$/;
 
@@ -37,6 +38,16 @@ const LoginPage = () => {
   const route = useRouter();
 
   const [showPassword, setShowPassword] = useState(false);
+
+  const [openDialog, setOpenDialog] = useState(false);
+
+  const handleCloseDialog = () => {
+    setOpenDialog(false)
+  }
+
+  const handleOpenDialog = () => {
+    setOpenDialog(true)
+  }
 
   const handleClickShowPassword = () => setShowPassword(show => !show);
 
@@ -83,6 +94,7 @@ const LoginPage = () => {
 
   return (
     <div className="flex flex-col h-screen justify-center items-center">
+      <ForgotPasswordDialog open={openDialog} handleClose={handleCloseDialog} />
       <Box sx={{
         width: isMobile ? "100" : "30rem"
       }}>
@@ -122,7 +134,7 @@ const LoginPage = () => {
                         <FormLabel
                           htmlFor="input-username"
                         >
-                          ชื่อผู้ใช้ระบบ
+                          อีเมล
                         </FormLabel>
                         <OutlinedInput
                           id="input-username"
@@ -181,8 +193,6 @@ const LoginPage = () => {
               </Grid>
               <Button
                 disabled={loginLoaded}
-                type="submit"
-                variant="contained"
                 endIcon={
                   loginLoaded ? (
                     <CircularProgress size={15} color="inherit" />
@@ -190,15 +200,24 @@ const LoginPage = () => {
                     <LoginIcon />
                   )
                 }
+                type="submit"
+                variant="contained"
                 className={`mt-3 w-full`}
               >
                 เข้าสู่ระบบ
               </Button>
-              <Link className='text-center text-blue-500 underline' href={"/register"}>
-                <Typography variant='body2' >
-                  สมัครสมาชิก
+              <Box className={`flex justify-center gap-2 ${isMobile ? "flex-col" : ""} `}>
+                <Link className='text-center text-blue-500 underline' href={"/register"}>
+                  <Typography variant='body2' >
+                    สมัครสมาชิก
+                  </Typography>
+                </Link>
+                {!isMobile ? <Typography>,</Typography> : ""}
+
+                <Typography onClick={handleOpenDialog} variant='body2' className='text-center text-blue-500 underline cursor-pointer' >
+                  ลืมรหัสผ่าน
                 </Typography>
-              </Link>
+              </Box>
             </CardContent>
           </form>
         </Card>

@@ -1,7 +1,7 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 "use client";
 
-import { Autocomplete, Box, Button, Grid, Paper, TextField, Typography } from "@mui/material"
+import { Autocomplete, Box, Button, FormControl, FormHelperText, Grid, InputLabel, MenuItem, Paper, Select, TextField, Typography, useMediaQuery, useTheme } from "@mui/material"
 import SaveIcon from '@mui/icons-material/Save';
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import { useRouter } from "next/navigation";
@@ -33,9 +33,13 @@ import { AddStudentValidate } from "./FormStudentValidate";
 import { StudentResponse } from "@/models/students/studentResponse";
 import { productImageURL } from "@/utils/commonUtil";
 import { StudentUpdate } from "@/models/students/studentUpdate";
+import { userSelector } from "@/store/slices/userSlice";
+import { useSelector } from "react-redux";
+import { RoleCodeData } from "@/utils/constant";
 
 export interface IInput {
     id?: string;
+    title?: string;
     firstName: string;
     lastName: string;
     imageFiles: any[];
@@ -67,8 +71,14 @@ const FormStudentPage: FC<Props> = ({
     const [imageUrl, setImageUrl] = useState<string>("");
     const [student, setStudent] = useState<StudentResponse | null>(null);
 
+    const { userInfo } = useSelector(userSelector)
+
+    const theme = useTheme();
+    const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
+
     const initValues: IInput = {
         firstName: "",
+        title: "",
         lastName: "",
         phoneNumber: "",
         address: "",
@@ -81,7 +91,7 @@ const FormStudentPage: FC<Props> = ({
         idCard: "",
         imageFiles: [],
         religion: "",
-        schoolId: "",
+        schoolId: userInfo ? userInfo.schoolId ? userInfo.schoolId : "" : "",
         schoolYearId: "",
         termId: "",
     };
@@ -111,6 +121,7 @@ const FormStudentPage: FC<Props> = ({
         setStudent(data);
         let student: IInput = {
             id: data.id,
+            title: data.title,
             firstName: data.firstName,
             lastName: data.lastName,
             phoneNumber: data.phoneNumber,
@@ -130,33 +141,11 @@ const FormStudentPage: FC<Props> = ({
         };
         for (const key in student)
             setValue(key as keyof typeof student, student[key as keyof typeof student])
-
     }
 
     useEffect(() => {
         if (id) loadStudent(id)
     }, [id, dispatch]);
-
-
-    // const initValues: IInput = {
-    //     firstName: "firstName",
-    //     lastName: "lastName",
-    //     phoneNumber: "0616032203",
-    //     address: "address",
-    //     birthday: dayjs("05/18/2024"),
-    //     classId: "1124CF5A-6D96-4A05-844C-8A3A80C8E81C".toLowerCase(),
-    //     classRoomId: "CF7E4C43-1C38-4251-9B68-D319EB963D19".toLowerCase(),
-    //     email: "email@gmail.com",
-    //     genderId: "99EA90E8-C8EF-45E2-86F4-0CE3DF6660E1".toLowerCase(),
-    //     hobby: "hobby ",
-    //     idCard: "1111111111111",
-    //     imageFiles: [],
-    //     religion: "religion",
-    //     schoolId: "C3E93BA4-C4EF-40A5-8D1B-CC80F6DC8CF6".toLowerCase(),
-    //     schoolYearId: "6122DB77-715B-45FC-B1CF-255B06D53549".toLowerCase(),
-    //     termId: "8FA58D00-5C34-4263-BD44-4961D04A8A52".toLowerCase()
-    // };
-
 
     const onFileUpload = (file: File | null) => {
         if (file) setValue('imageFiles', [file]);
@@ -194,6 +183,9 @@ const FormStudentPage: FC<Props> = ({
                 icon: "success",
                 title: 'บันทึกข้อมูลสำเร็จ',
                 showConfirmButton: false,
+                customClass: {
+                    container: 'swal2-custom-font'
+                },
                 timer: 1500
             }).then(() => {
                 dispatch(refresh());
@@ -204,6 +196,9 @@ const FormStudentPage: FC<Props> = ({
                 position: "center",
                 icon: "error",
                 title: 'Error',
+                customClass: {
+                    container: 'swal2-custom-font'
+                },
                 showConfirmButton: false,
                 timer: 1500
             });
@@ -219,15 +214,22 @@ const FormStudentPage: FC<Props> = ({
 
     const onUpdateStudent = async (value: IInput) => {
         value.birthday = formatDateForMUIDatePicker(new Date(value.birthday));
-        const result = await dispatch(updateStudent({ ...value, id: student?.id } as StudentUpdate)).unwrap();
+        const result = await dispatch(updateStudent({ ...value, id: student?.id, isActive: student?.isActive } as StudentUpdate)).unwrap();
 
         return result;
     }
 
+    const titleList = [
+        "ด.ช.",
+        "ด.ญ.",
+        "นาย",
+        "นางสาว",
+    ]
+
     return (
         <Box className="w-full">
             <form onSubmit={onSubmit}>
-                <Box className="flex flex-row justify-between mb-4">
+                <Box className={`flex ${isMobile ? "flex-col" : "flex-row"} flex-row justify-between mb-4`}>
                     <Box>
                         <Typography variant="h5">
                             {!student ? "เพิ่มข้อมูลนักเรียน" : "แก้ไขข้อมูลนักเรียน"}
@@ -251,9 +253,39 @@ const FormStudentPage: FC<Props> = ({
                         </Box>
                     </Box>
                 </Box>
+
                 <Grid container spacing={2}>
+                    {/* คำนำหน้าชื่อ */}
+                    <Grid item xs={12} sm={4} md={1.5}>
+                        <Controller
+                            control={control}
+                            name="firstName"
+                            render={({ field }) => (
+                                <Controller
+                                    control={control}
+                                    name="title"
+                                    render={({ field }) => {
+                                        return <Autocomplete
+                                            {...field}
+                                            value={field.value}
+                                            onChange={(_, data) => field.onChange(data)}
+                                            getOptionLabel={(e) => e}
+                                            options={titleList}
+                                            renderInput={(params) =>
+                                            (<TextField
+                                                {...params}
+                                                error={Boolean(errors.title?.message)}
+                                                helperText={errors.title?.message?.toString()}
+                                                label="คำนำหน้า" />)
+                                            }
+                                        />
+                                    }}
+                                />
+                            )}
+                        />
+                    </Grid>
                     {/* ชื่อจริง */}
-                    <Grid item xs={12} sm={6} md={3}>
+                    <Grid item xs={12} sm={4} md={2.75}>
                         <Controller
                             control={control}
                             name="firstName"
@@ -270,7 +302,7 @@ const FormStudentPage: FC<Props> = ({
                         />
                     </Grid>
                     {/* นามสกุล */}
-                    <Grid item xs={12} sm={6} md={3}>
+                    <Grid item xs={12} sm={4} md={2.75}>
                         <Controller
                             control={control}
                             name="lastName"
@@ -287,7 +319,7 @@ const FormStudentPage: FC<Props> = ({
                         />
                     </Grid>
                     {/* วันเกิด */}
-                    <Grid item xs={12} sm={6} md={3}>
+                    <Grid item xs={12} sm={6} md={2.5}>
                         <LocalizationProvider dateAdapter={AdapterDayjs}>
                             <Controller
                                 control={control}
@@ -311,7 +343,7 @@ const FormStudentPage: FC<Props> = ({
                         </LocalizationProvider>
                     </Grid>
                     {/* อีเมล */}
-                    <Grid item xs={12} sm={6} md={3}>
+                    <Grid item xs={12} sm={6} md={2.5}>
                         <Controller
                             control={control}
                             name="email"
@@ -327,6 +359,7 @@ const FormStudentPage: FC<Props> = ({
                             )}
                         />
                     </Grid>
+
                     {/* เบอร์โทรศัพท์ */}
                     <Grid item xs={12} sm={6} md={3}>
                         <Controller
@@ -415,16 +448,17 @@ const FormStudentPage: FC<Props> = ({
                             )}
                         />
                     </Grid>
+
                     {/* งานอดิเรก */}
-                    <Grid item xs={12} sm={6} md={3}>
+                    <Grid item xs={12} sm={6} md={4}>
                         <Controller
                             control={control}
                             name="hobby"
                             render={({ field }) => (
                                 <TextField
                                     {...field}
-                                    error={Boolean(errors.idCard?.message)}
-                                    helperText={errors.idCard?.message?.toString()}
+                                    error={Boolean(errors.hobby?.message)}
+                                    helperText={errors.hobby?.message?.toString()}
                                     className="w-full"
                                     label="งานอดิเรก"
                                     variant="outlined"
@@ -433,17 +467,20 @@ const FormStudentPage: FC<Props> = ({
                         />
                     </Grid>
                     {/* โรงเรียน */}
-                    <Grid item xs={12} sm={6} md={3}>
+                    <Grid item xs={12} sm={6} md={4}>
                         <Controller
                             control={control}
                             name="schoolId"
-                            render={({ field }) => (
-                                <Autocomplete
+                            render={({ field }) => {
+                                const checkValue = userInfo ? userInfo?.role?.roleCode !== RoleCodeData.ADMIN ? userInfo?.schoolId : field.value : field.value
+                                const checkDisabled = userInfo ? userInfo?.role?.roleCode !== RoleCodeData.ADMIN ? true : false : false
+
+                                return <Autocomplete
                                     {...field}
-                                    value={findMatchOptionAutocompleteSingle(schools, field.value, "id")}
+                                    value={findMatchOptionAutocompleteSingle(schools, checkValue, "id")}
                                     onChange={(_, data) => field.onChange(data?.id)}
                                     loading={!schoolsLoaded}
-                                    disabled={!schoolsLoaded}
+                                    disabled={!schoolsLoaded || checkDisabled}
                                     getOptionLabel={(e) => e.schoolNameTh || ""}
                                     options={schools}
                                     renderInput={(params) =>
@@ -454,11 +491,11 @@ const FormStudentPage: FC<Props> = ({
                                         label="โรงเรียน" />)
                                     }
                                 />
-                            )}
+                            }}
                         />
                     </Grid>
                     {/* ห้องเรียน */}
-                    <Grid item xs={12} sm={6} md={3}>
+                    <Grid item xs={12} sm={6} md={2}>
                         <Controller
                             control={control}
                             name="classRoomId"
@@ -483,7 +520,7 @@ const FormStudentPage: FC<Props> = ({
                         />
                     </Grid>
                     {/* ชั้นเรียน */}
-                    <Grid item xs={12} sm={6} md={3}>
+                    <Grid item xs={12} sm={6} md={2}>
                         <Controller
                             control={control}
                             name="classId"
@@ -508,6 +545,8 @@ const FormStudentPage: FC<Props> = ({
                             )}
                         />
                     </Grid>
+
+
                     {/* ปีการศึกษา */}
                     <Grid item xs={12} sm={6} md={3}>
                         <Controller
@@ -621,11 +660,9 @@ const ShowImage = ({ imageUrl, student }: { imageUrl: string, student: StudentRe
     else {
         if (student) {
             return <Box className="flex justify-start">
-
                 {student.imageUrl ? <Paper style={styleDrop} variant='outlined'>
                     <Image src={productImageURL(student.imageUrl)} width={250} height={300} alt="image-student" />
                 </Paper> : ""}
-
             </Box>
         }
         else {

@@ -1,4 +1,4 @@
-import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
+import { createAsyncThunk, createSlice, isAnyOf } from "@reduxjs/toolkit";
 import { RootState } from "../store";
 import server from "@/services/serverService";
 import { ServiceResponse } from "@/models/serviceResponse";
@@ -6,7 +6,9 @@ import { LoginResponse } from "@/models/user/loginResponse";
 import { LoginRequest } from "@/models/user/loginRequest";
 import { RegisterRequest } from "@/models/user/registerRequest";
 import { UserResponse } from "@/models/user/userResponse";
-import { setParam } from "./studentSlice";
+import { UserUpdate } from "@/models/user/userUpdate";
+import { ChangePassword } from "@/models/user/changePassword";
+import { ForgotPassword } from "@/models/user/forgotPassword";
 
 interface UserState {
     userInfo: UserResponse | null;
@@ -15,6 +17,10 @@ interface UserState {
     logoutLoaded: boolean;
     isAuthenticated: boolean;
     isAuthenticating: boolean;
+    updateUserLoaded: boolean;
+    registerLoaded: boolean;
+    changePasswordLoaded: boolean;
+    forgotPasswordLoaded: boolean;
 };
 
 const initialState: UserState = {
@@ -24,6 +30,10 @@ const initialState: UserState = {
     isAuthenticated: false, // ได้รับการรับรองความถูกต้องแล้ว
     isAuthenticating: true, // คือการตรวจสอบสิทธิ์
     userInfo: null,
+    updateUserLoaded: false,
+    registerLoaded: false,
+    changePasswordLoaded: false,
+    forgotPasswordLoaded: false
 };
 
 export const login = createAsyncThunk<ServiceResponse<LoginResponse>, LoginRequest>("user/login", async (data, thunkAPI) => {
@@ -40,7 +50,7 @@ export const login = createAsyncThunk<ServiceResponse<LoginResponse>, LoginReque
 });
 
 export const fetchInfo = createAsyncThunk<ServiceResponse<UserResponse>, void>("user/fetchInfo",
-    async (_, thunkAPI) => {
+    async () => {
         try {
             const result: ServiceResponse<UserResponse> = await server.user.getInfo();
             return result;
@@ -71,6 +81,39 @@ export const logout = createAsyncThunk("user/logout", async () => {
         throw new Error(error)
     }
 });
+
+export const updateUser = createAsyncThunk<ServiceResponse<any>, UserUpdate>
+    ("user/updateUser", async (data) => {
+        try {
+            const result = await server.user.updateUser(data);
+            return result;
+        } catch (error: any) {
+            console.log("error : ", error);
+            throw new Error(error)
+        }
+    });
+
+export const changePassword = createAsyncThunk<ServiceResponse<any>, ChangePassword>
+    ("user/changePassword", async (data) => {
+        try {
+            const result = await server.user.changePassword(data);
+            return result;
+        } catch (error: any) {
+            console.log("error : ", error);
+            throw new Error(error)
+        }
+    });
+
+export const forgotPassword = createAsyncThunk<ServiceResponse<any>, ForgotPassword>
+    ("user/forgotPassword", async (data) => {
+        try {
+            const result = await server.user.forgotPassword(data);
+            return result;
+        } catch (error: any) {
+            console.log("error : ", error);
+            throw new Error(error)
+        }
+    });
 
 const userSlice = createSlice({
     name: "user",
@@ -113,16 +156,48 @@ const userSlice = createSlice({
             }
         });
 
+        // ------ update user -------
+        builder.addCase(updateUser.pending, (state) => {
+            state.updateUserLoaded = true;
+        });
+
         builder.addCase(logout.pending, (state) => {
             state.logoutLoaded = true;
         });
 
-        builder.addCase(logout.rejected, (state) => {
+        // ------ register -------
+        builder.addCase(register.pending, (state) => {
+            state.registerLoaded = true;
+        });
+
+        // ------ changePassword -------
+        builder.addCase(changePassword.pending, (state) => {
+            state.changePasswordLoaded = true;
+        });
+
+        // ------ forgotPassword -------
+        builder.addCase(forgotPassword.pending, (state) => {
+            state.forgotPasswordLoaded = true;
+        });
+
+        builder.addMatcher(isAnyOf(changePassword.fulfilled, changePassword.rejected), (state) => {
+            state.changePasswordLoaded = false;
+        });
+
+        builder.addMatcher(isAnyOf(register.rejected, register.fulfilled), (state) => {
+            state.registerLoaded = false;
+        });
+
+        builder.addMatcher(isAnyOf(logout.rejected, logout.fulfilled), (state) => {
             state.logoutLoaded = false;
         });
 
-        builder.addCase(logout.fulfilled, (state) => {
-            state.logoutLoaded = false;
+        builder.addMatcher(isAnyOf(updateUser.fulfilled, updateUser.rejected), (state) => {
+            state.updateUserLoaded = false;
+        });
+
+        builder.addMatcher(isAnyOf(forgotPassword.fulfilled, forgotPassword.rejected), (state) => {
+            state.forgotPasswordLoaded = false;
         });
     }
 });

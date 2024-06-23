@@ -1,12 +1,32 @@
 import useClass from '@/hooks/useClass';
 import useClassRoom from '@/hooks/useClassRoom';
 import useGender from '@/hooks/useGender';
+import useSchool from '@/hooks/useSchool';
 import { resetParam, setParam } from '@/store/slices/studentSlice';
+import { userSelector } from '@/store/slices/userSlice';
 import { useAppDispatch } from '@/store/store'
-import { Box, Button, CircularProgress, FormControl, Grid, InputLabel, MenuItem, Select, SelectChangeEvent, TextField } from '@mui/material'
-import { Fragment, useState } from 'react';
+import { RoleCodeData } from '@/utils/constant';
+import {
+    Box,
+    Button,
+    FormControl,
+    Grid,
+    InputLabel,
+    MenuItem,
+    Select,
+    SelectChangeEvent,
+} from '@mui/material';
+import { FC, useState } from 'react';
+import { useSelector } from 'react-redux';
 
-const ToolbarStudent = () => {
+type Props = {
+    setSchoolIdValue: (value: string) => void;
+    schoolIdValue: string
+}
+
+const ToolbarStudent: FC<Props> = ({ schoolIdValue, setSchoolIdValue }) => {
+
+    const { userInfo } = useSelector(userSelector);
 
     const [genderValue, setGenderValue] = useState<string>("")
     const [classValue, setClassValue] = useState<string>("")
@@ -15,9 +35,15 @@ const ToolbarStudent = () => {
 
     const dispatch = useAppDispatch();
 
-    const { classes, classesLoaded } = useClass();
-    const { classRooms, classRoomsLoaded } = useClassRoom();
-    const { genders, gendersLoaded } = useGender();
+    const { classes } = useClass();
+    const { classRooms } = useClassRoom();
+    const { genders } = useGender();
+    const { schools } = useSchool();
+
+    const handleChangeSchool = (event: SelectChangeEvent) => {
+        setSchoolIdValue(event.target.value);
+        dispatch(setParam({ schoolId: event.target.value })) // เพือให้มัน refrech เฉย
+    }
 
     const handleChangeGender = (event: SelectChangeEvent) => {
         setGenderValue(event.target.value);
@@ -41,6 +67,7 @@ const ToolbarStudent = () => {
 
     const onRestore = () => {
         setGenderValue("")
+        setSchoolIdValue("")
         setClassValue("")
         setClassRoomValue("")
         setStatusValue("")
@@ -50,6 +77,27 @@ const ToolbarStudent = () => {
     return (
         <Box className="w-full mb-4" >
             <Grid container spacing={2}>
+                {
+                    userInfo?.role.roleCode === RoleCodeData.ADMIN ? <Grid item xs={12} md={2}>
+                        <FormControl className='w-full' size="small">
+                            <InputLabel id="demo-select-small-school">โรงเรียน</InputLabel>
+                            <Select
+                                labelId="demo-select-small-school"
+                                id="demo-select-school"
+                                value={schoolIdValue}
+                                label="โรงเรียน"
+                                onChange={handleChangeSchool}
+                            >
+                                <MenuItem value="">
+                                    <em>None</em>
+                                </MenuItem>
+                                {schools.map(s =>
+                                    <MenuItem key={s.id} value={s.id}>{s.schoolNameTh}</MenuItem>
+                                )}
+                            </Select>
+                        </FormControl>
+                    </Grid> : ""
+                }
                 <Grid item xs={12} md={1.5}>
                     <FormControl className='w-full' size="small">
                         <InputLabel id="demo-select-small-gender">เพศ</InputLabel>

@@ -1,4 +1,5 @@
 export interface StudentCreate {
+    title?: string;
     firstName: string;
     lastName: string;
     imageFiles: File[];

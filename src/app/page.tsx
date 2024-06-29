@@ -1,5 +1,7 @@
-import { redirect } from "next/navigation";
+import IndexPage from "@/components/pages/index/IndexPage";
 
 export default function Page() {
-  redirect("/login");
+  // redirect("/login");
+
+  return <IndexPage />
 }

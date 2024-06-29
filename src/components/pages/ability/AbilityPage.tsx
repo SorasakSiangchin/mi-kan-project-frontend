@@ -15,6 +15,8 @@ import ToolbarAbility from './ToolbarAbility';
 import MultipleIntelligencesRender from './MultipleIntelligencesRender';
 import { RoleCodeData } from '@/utils/constant';
 import { screenWidth } from '@/utils/util';
+import InfoOutlinedIcon from '@mui/icons-material/InfoOutlined';
+import AbilityInfoDialog from './AbilityInfoDialog';
 
 const AbilityPage = () => {
 
@@ -23,11 +25,23 @@ const AbilityPage = () => {
   const dispatch = useAppDispatch();
 
   const [schoolIdValue, setSchoolIdValue] = useState<string>("")
+  const [openInfoDialog, setOpenInfoDialog] = useState<boolean>(false)
+  const [abilityData, setAbilityData] = useState<AbilityResponse | null>(null)
 
   const { abilities, abilitiesLoaded } = useSelector(useAbilitySelector)
   const { userInfo } = useSelector(userSelector)
 
   const checkRole = schoolIdValue ? schoolIdValue : userInfo ? userInfo.role.roleCode === RoleCodeData.ADMIN ? "" : userInfo.schoolId : "";
+
+  const handleClickOpenInfoDialog = (ability: AbilityResponse) => {
+    setAbilityData(ability);
+    setOpenInfoDialog(true);
+  };
+
+  const handleCloseInfoDialog = () => {
+    setAbilityData(null);
+    setOpenInfoDialog(false);
+  };
 
   useEffect(() => {
     if (!abilitiesLoaded) if (userInfo) dispatch(fetchAbilities(checkRole))
@@ -59,7 +73,7 @@ const AbilityPage = () => {
       headerName: 'โรงเรียน',
       width: 250,
       renderCell: ({ row }) => {
-        console.log(row.student)
+        // console.log(row.student)
         return row.student?.school?.schoolNameTh ? <Chip label={row.student?.school?.schoolNameTh} variant="outlined" /> : ""
       }
     },
@@ -84,24 +98,11 @@ const AbilityPage = () => {
             </Tooltip>
           </div>
           <div>
-            {/* <Tooltip title="เพิ่มเติม">
-              <IconButton size="small" color='primary'>
-                <InfoIcon fontSize="medium" />
+            <Tooltip title="เพิ่มเติม">
+              <IconButton onClick={() => handleClickOpenInfoDialog(row)} size="small" color='primary'>
+                <InfoOutlinedIcon fontSize="medium" />
               </IconButton>
-            </Tooltip> */}
-          </div>
-          <div>
-            {/* {
-              row.status ? <Tooltip title="นำออก">
-                <IconButton onClick={() => onRemove(row.studentData)} size="small" color='error'>
-                  <RemoveCircleIcon fontSize="medium" />
-                </IconButton>
-              </Tooltip> : <Tooltip title="นำกลับมา">
-                <IconButton onClick={() => onReuse(row.studentData)} size="small" color='success'>
-                  <AutorenewIcon fontSize="medium" />
-                </IconButton>
-              </Tooltip>
-            } */}
+            </Tooltip>
           </div>
         </Box>
       ),
@@ -112,6 +113,7 @@ const AbilityPage = () => {
 
   return (
     <Box sx={{ width: screenWidth }}>
+      <AbilityInfoDialog ability={abilityData} handleClose={handleCloseInfoDialog} open={openInfoDialog} />
       <Box className="flex justify-between items-end mb-4 gap-3">
         <Box>
           <Typography variant='h5' >

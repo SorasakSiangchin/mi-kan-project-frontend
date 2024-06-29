@@ -3,6 +3,7 @@
 import { UserResponse } from "@/models/user/userResponse";
 import { fetchReportAbilityBySchoolId, useAbilitySelector } from "@/store/slices/abilitySlice";
 import { useAppDispatch } from "@/store/store";
+import { RoleCodeData } from "@/utils/constant";
 import { Box, Chip, Typography } from "@mui/material";
 import { DataGrid, GridColDef } from "@mui/x-data-grid";
 import { FC, useEffect } from "react"
@@ -18,8 +19,10 @@ const ReportAbilityBySchoolTable: FC<Props> = ({ userInfo }) => {
     const { reportAbilityBySchoolId, reportAbilityBySchoolIdLoaded }
         = useSelector(useAbilitySelector);
 
+    const checkRole = userInfo ? userInfo.role.roleCode === RoleCodeData.ADMIN ? "" : userInfo.schoolId : "";
+
     useEffect(() => {
-        if (!reportAbilityBySchoolIdLoaded) if (userInfo) dispatch(fetchReportAbilityBySchoolId(userInfo.schoolId ? userInfo.schoolId : ""))
+        if (!reportAbilityBySchoolIdLoaded) if (userInfo) dispatch(fetchReportAbilityBySchoolId(checkRole))
     }, [reportAbilityBySchoolIdLoaded, dispatch, userInfo])
 
 

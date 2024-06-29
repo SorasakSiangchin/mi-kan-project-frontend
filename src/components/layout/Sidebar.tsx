@@ -6,7 +6,8 @@ import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';
 import ChevronRightIcon from '@mui/icons-material/ChevronRight';
 import HomeIcon from '@mui/icons-material/Home';
 import PeopleAltIcon from '@mui/icons-material/PeopleAlt';
-import Person4Icon from '@mui/icons-material/Person4';
+import InfoIcon from '@mui/icons-material/Info';
+import Image from 'next/image';
 
 const drawerWidth = 240;
 
@@ -45,6 +46,11 @@ const datas: {
             icon: <PeopleAltIcon />
         },
         // {
+        //     title: "เกี่ยวกับเว็บไซต์",
+        //     url: "/about",
+        //     icon: <InfoIcon />
+        // },
+        // {
         //     title: "ข้อมูลคุณครู",
         //     url: "/home",
         //     icon: <Person4Icon />
@@ -72,7 +78,7 @@ const Sidebar: FC<Props> = ({ handleDrawerClose, open }) => {
             <DrawerHeader>
                 <Box className="w-full m-2">
                     <Box className="flex justify-center">
-                        <img src="/static/img/logo-mi.png" alt="img-logo" className='' width={50} height={50} />
+                        <Image src="/static/img/logo-mi.png" alt="img-logo" className='' width={50} height={50} />
                     </Box>
                     <Typography className='text-center'>
                         พหุปัญญา

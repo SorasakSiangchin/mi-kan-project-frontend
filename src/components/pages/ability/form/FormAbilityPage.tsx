@@ -24,6 +24,7 @@ import { RoleCodeData } from '@/utils/constant';
 export interface IInput {
     id?: string;
     multipleIntelligencesId: string;
+    reasonNote?: string;
     studentId: string;
     schoolYear?: string;
     score?: number;
@@ -34,6 +35,7 @@ const initValues: IInput = {
     multipleIntelligencesId: "",
     studentId: "",
     schoolYear: "",
+    reasonNote: "",
     score: 0
 };
 
@@ -67,22 +69,25 @@ const FormAbilityPage: FC<Props> = ({ id }) => {
         resolver: yupResolver(AbilityValidate)
     });
 
-    const loadAbility = async (id: string) => {
-        const { data, success } = await dispatch(fetchAbilityById(id)).unwrap();
-        setAbility(data)
-        let ability: IInput = {
-            id: data.id,
-            multipleIntelligencesId: data.multipleIntelligencesId,
-            studentId: data.studentId,
-            schoolYear: data.schoolYear,
-            score: data.score
-        };
 
-        for (const key in ability)
-            setValue(key as keyof typeof ability, ability[key as keyof typeof ability])
-    }
 
     useEffect(() => {
+        const loadAbility = async (id: string) => {
+            const { data } = await dispatch(fetchAbilityById(id)).unwrap();
+            setAbility(data)
+            let ability: IInput = {
+                id: data.id,
+                multipleIntelligencesId: data.multipleIntelligencesId,
+                studentId: data.studentId,
+                reasonNote: data.reasonNote,
+                schoolYear: data.schoolYear,
+                score: data.score
+            };
+
+            for (const key in ability)
+                setValue(key as keyof typeof ability, ability[key as keyof typeof ability])
+        }
+
         if (id) loadAbility(id);
     }, [id, dispatch]);
 
@@ -216,7 +221,23 @@ const FormAbilityPage: FC<Props> = ({ id }) => {
                                     }}
                                 />
                             </Grid>
-
+                            <Grid item xs={12} sm={12} md={12}>
+                                <Controller
+                                    control={control}
+                                    name='reasonNote'
+                                    render={({ field }) => {
+                                        return <TextField
+                                            {...field}
+                                            error={Boolean(errors.reasonNote?.message)}
+                                            helperText={errors.reasonNote?.message?.toString()}
+                                            className='w-full'
+                                            label="หมายเหตุ"
+                                            multiline
+                                            rows={4}
+                                        />
+                                    }}
+                                />
+                            </Grid>
                         </Grid>
                     </form>
                 </CardContent>

@@ -17,7 +17,7 @@ const middleware = (request: NextRequest): NextResponse => {
             request,
         });
     }
-    else if (path != "/login" && path != "/register") {
+    else if (path != "/login" && path != "/register" && path != "/") {
         return NextResponse.redirect(new URL("/login", request.url));
     }
 

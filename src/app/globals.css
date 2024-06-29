@@ -139,3 +139,16 @@ code {
 .swal2-custom-font {
   font-family: 'Kanit', sans-serif !important;
 }
+
+.bg-blur {
+  background: rgba(0, 0, 0, 0.4);
+  backdrop-filter: blur(5px);
+}
+
+.transition-box {
+  transition: 0.3s ease;
+
+  &:hover {
+    transform: scale(1.09);
+  }
+}

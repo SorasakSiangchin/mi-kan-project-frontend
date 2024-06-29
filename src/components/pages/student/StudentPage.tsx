@@ -103,7 +103,6 @@ const StudentPage = () => {
                     <Chip label="ระงับการใช้งาน" color="error" variant="outlined" />;
             },
         },
-
         {
             field: 'school',
             headerName: 'โรงเรียน',

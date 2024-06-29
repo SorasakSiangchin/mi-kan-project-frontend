@@ -137,7 +137,8 @@ const RegisterPage = () => {
     return (
         <div className={`flex flex-col h-screen justify-center items-center ${isMobile ? "m-4 h-full" : ""} `} >
             <form onSubmit={onSubmit} >
-                <Card sx={{ width: isMobile ? "100" : "40rem" }} className='p-4 '>
+
+                <Card sx={{ width: isMobile ? "100" : "40rem" }} className='p-4 ' variant='outlined' elevation={0} >
                     <Box className={`flex ${isMobile ? "flex-col" : ""} justify-between mb-4`} >
                         <Typography variant='h5' >
                             สมัครสมาชิก

@@ -15,6 +15,7 @@ import { LoginRequest } from '@/models/user/loginRequest';
 import { useSelector } from 'react-redux';
 import LoginIcon from '@mui/icons-material/Login';
 import ForgotPasswordDialog from './ForgotPasswordDialog';
+import Image from 'next/image';
 
 const emailValidation = /^[a-zA-Z0-9_\\.]+@[a-zA-Z]+\.[a-zA-Z0-9\\.]+$/;
 
@@ -99,15 +100,17 @@ const LoginPage = () => {
         width: isMobile ? "100" : "30rem"
       }}>
         <Box className="flex flex-col justify-center items-center">
-          <img src="/static/img/logo-mi.png" alt="img-logo" width={100} height={100} />
+          <Image src="/static/img/logo-mi.png" alt="img-logo" width={100} height={100} />
           <Typography variant='h5' className='text-center'>
-            ระบบบันทึกความสามารถพิเศษ ด้วยระบบอิเล็กทรอนิกส์
+            ระบบฐานข้อมูลสารสนเทศการพัฒนาผู้เรียนตามแนวทางพหุปัญญา
           </Typography>
           <Typography variant='body2' className='text-center'>
-            สํานักวิชาการและมาตรฐานการศึกษา สพฐ.
+            สำนักงานเขตพื้นที่การศึกษาประถมศึกษากาญจนบุรี เขต 1
           </Typography>
         </Box>
         <Card
+          variant='outlined'
+          elevation={0}
           sx={{
             mx: isMobile ? 3 : 0,
             mt: 5

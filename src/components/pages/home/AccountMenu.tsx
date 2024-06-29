@@ -57,7 +57,7 @@ const AccountMenu: FC<{ userInfo: UserResponse }> = ({ userInfo }) => {
             if (result.isConfirmed) {
                 handleClose();
                 const result = await dispatch(logout()).unwrap();
-                if (result === "ok") router.push("/login");
+                if (result === "ok") router.replace("/");
             }
         });
     }

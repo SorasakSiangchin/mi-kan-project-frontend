@@ -34,12 +34,14 @@ const HomePage = () => {
 
     const [loadedSetting, setLoadedSetting] = useState<boolean>(false);
 
+    const checkRole = userInfo ? userInfo.role.roleCode === RoleCodeData.ADMIN ? "" : userInfo.schoolId : "";
+
     // ดึงข้อมูล พหุปัญญา 8 ด้านพร้อมจำนวนคนที่มีความสามารถพิเศษในแต่ละด้าน
     useEffect(() => {
         const loadData = async () => {
             // console.log(userInfo)
             if (userInfo) {
-                const { data, success } = await dispatch(fetchMultipleIntelligencesBySchoolId(userInfo.schoolId ? userInfo.schoolId : "")).unwrap();
+                const { data, success } = await dispatch(fetchMultipleIntelligencesBySchoolId(checkRole)).unwrap();
                 setLoadedSetting(false);
                 if (success) {
                     const result = data.map((e) => {
@@ -275,6 +277,9 @@ const HomePage = () => {
             <Typography className='text-center' variant='h6'>
                 จำนวนนักเรียนที่มีความสามารถพิเศษในแต่ละด้าน
             </Typography>
+            <Typography className='text-center' variant='body2'>
+                {userInfo?.role.roleCode === RoleCodeData.ADMIN ? "( ทั้งหมด )" : `( ${userInfo?.school.schoolNameTh} )`}
+            </Typography>
             <Box
                 id="chartdiv"
                 sx={{
@@ -287,7 +292,6 @@ const HomePage = () => {
             <Box>
                 <ReportAbilityBySchoolTable userInfo={userInfo} />
             </Box>
-
             <Box className="mt-10" >
                 {userInfo?.role.roleCode === RoleCodeData.ADMIN ? <ReportAbilityBySchoolAllTable userInfo={userInfo} /> : ""}
             </Box>

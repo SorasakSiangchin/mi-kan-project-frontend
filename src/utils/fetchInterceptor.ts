@@ -15,7 +15,7 @@ const post = async (
   const url = `${option.baseURL || getBASE_URL_API()}${endPoint}`;
 
   if (data instanceof FormData) {
-    // console.log("url : " + url);
+    console.log("url : " + url);
     response = await fetch(url, {
       method: "POST",
       headers: await getHeaderFormData(),
@@ -24,6 +24,7 @@ const post = async (
   }
 
   else {
+    console.log("url : " + url);
     response = await fetch(url, {
       method: "POST",
       headers: await getHeaderJSON(),

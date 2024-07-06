@@ -12,7 +12,10 @@ const post = async (
 ): Promise<any> => {
   let response = null;
 
-  const url = `${option.baseURL || getBASE_URL_API()}${endPoint}`;
+  // const url = `${option.baseURL || getBASE_URL_API()}${endPoint}`;
+
+  const url = `${"http://localhost:7278/api/"}${endPoint}`;
+
 
   if (data instanceof FormData) {
     console.log("url : " + url);

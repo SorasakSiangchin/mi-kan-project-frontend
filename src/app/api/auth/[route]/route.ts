@@ -27,16 +27,18 @@ async function login(body: {
     password: string;
 }): Promise<any> {
     try {
+
+        // เรียก api จาก back end
         const response: ServiceResponse<LoginResponse> = await fetchInterceptor.post(`User/Login`, createFormData(body));
         const { data: { token }, success } = response;
 
-        // if (success) {
-        //     cookies().set(ACCESS_TOKEN_KEY, token, {
-        //         secure: true,
-        //         sameSite: "strict",
-        //         path: "/",
-        //     });
-        // }
+        if (success) {
+            cookies().set(ACCESS_TOKEN_KEY, token, {
+                secure: true,
+                sameSite: "strict",
+                path: "/",
+            });
+        }
 
         return NextResponse.json(response);
     } catch (error: any) {

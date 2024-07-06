@@ -52,12 +52,19 @@ const terms = {
     getTerms: async () => await fetchInterceptor.get("Term")
 }
 
+// login: async (value: any): Promise<any> => await fetchInterceptor.post("auth/login", value, {
+//     baseURL: process.env.NEXT_PUBLIC_BASE_URL_LOCAL_API,
+// }),
+// // เรียก api ของ next 
+// logout: async (): Promise<any> => await fetchInterceptor.post("auth/logout", {}, {
+//     baseURL: process.env.NEXT_PUBLIC_BASE_URL_LOCAL_API,
+// }),
+
 const user = {
     changePassword: (value: any) => fetchInterceptor.post("User/ChangePassword", value), // เปลี่ยน password
     forgotPassword: (value: any) => fetchInterceptor.post("User/ForgotPassword", value), // ลืม password
-    login: async (value: any): Promise<any> => await fetchInterceptor.post("auth/login", value, {
-        baseURL: process.env.NEXT_PUBLIC_BASE_URL_LOCAL_API,
-    }),
+    // เรียก api ของ next 
+    login: async (value: any): Promise<any> => await fetchInterceptor.post("User/Login", createFormData(value)),
     logout: async (): Promise<any> => await fetchInterceptor.post("auth/logout", {}, {
         baseURL: process.env.NEXT_PUBLIC_BASE_URL_LOCAL_API,
     }),

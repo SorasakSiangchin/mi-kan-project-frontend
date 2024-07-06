@@ -9,6 +9,7 @@ import { UserResponse } from "@/models/user/userResponse";
 import { UserUpdate } from "@/models/user/userUpdate";
 import { ChangePassword } from "@/models/user/changePassword";
 import { ForgotPassword } from "@/models/user/forgotPassword";
+import { setTokenToSession } from "@/bil/auth";
 
 interface UserState {
     userInfo: UserResponse | null;
@@ -38,7 +39,15 @@ const initialState: UserState = {
 
 export const login = createAsyncThunk<ServiceResponse<LoginResponse>, LoginRequest>("user/login", async (data, thunkAPI) => {
     try {
+
+        // console.log("data : ", data);
         const result: ServiceResponse<LoginResponse> = await server.user.login(data);
+
+        if (result.success) {
+            var resultToken = await setTokenToSession(result.data.token)
+            if (!resultToken) throw new Error("error set token to session");
+        }
+        // if()
 
         // if (result.data) thunkAPI.dispatch(setUserInfo(result.data.user));
 

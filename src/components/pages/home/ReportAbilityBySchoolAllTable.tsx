@@ -308,7 +308,11 @@ const ReportAbilityBySchoolAllTable: FC<Props> = ({ userInfo }) => {
                 <DataGrid
                     getRowId={(row) => row.id}
                     rows={reportAbilityBySchoolAll}
+                    className={reportAbilityBySchoolAll.length > 0 ? "" : "h-[25rem]"}
                     columns={columns}
+                    localeText={{
+                        noRowsLabel: 'ไม่มีข้อมูล'
+                    }}
                     initialState={{
                         pagination: {
                             paginationModel: { page: 0, pageSize: 8 },

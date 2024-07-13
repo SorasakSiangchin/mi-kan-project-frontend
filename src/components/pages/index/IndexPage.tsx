@@ -44,7 +44,7 @@ const IndexPage = () => {
                             นางสาวศศิชา ทรัพย์ล้น ศึกษานิเทศก์ชำนาญการพิเศษ
                         </Typography>
                         <Typography className="text-white text-center" >
-                            นายพนภาค ผิวเกลี้ยง ศึกษานิเทศก์ชำนาญการพิเศ
+                            นายพนภาค ผิวเกลี้ยง ศึกษานิเทศก์ชำนาญการพิเศษ
                         </Typography>
                     </Box>
                 </Box>

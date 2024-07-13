@@ -1,10 +1,9 @@
-"use client";
+"use client";;
 import { useEffect, useState } from 'react';
 import * as am5 from "@amcharts/amcharts5";
 import * as am5xy from "@amcharts/amcharts5/xy";
 import am5themes_Animated from "@amcharts/amcharts5/themes/Animated";
 import { Box, Typography } from '@mui/material';
-import { DataGrid, GridColDef } from '@mui/x-data-grid';
 import { useSelector } from 'react-redux';
 import { fetchMultipleIntelligencesBySchoolId, useMultipleIntelligencesSelector } from '@/store/slices/multipleIntelligencesSlice';
 import { useAppDispatch } from '@/store/store';

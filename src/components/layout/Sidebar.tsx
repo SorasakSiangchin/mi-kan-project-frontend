@@ -45,11 +45,11 @@ const datas: {
             url: "/ability",
             icon: <PeopleAltIcon />
         },
-        // {
-        //     title: "เกี่ยวกับเว็บไซต์",
-        //     url: "/about",
-        //     icon: <InfoIcon />
-        // },
+        {
+            title: "เกี่ยวกับระบบ",
+            url: "/about",
+            icon: <InfoIcon />
+        },
         // {
         //     title: "ข้อมูลคุณครู",
         //     url: "/home",

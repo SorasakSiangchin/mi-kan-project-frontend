@@ -1,4 +1,4 @@
-import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
+import { createAsyncThunk, createSlice, isAnyOf } from "@reduxjs/toolkit";
 import { RootState } from "../store";
 import server from "@/services/serverService";
 import { ServiceResponse } from "@/models/serviceResponse";
@@ -14,6 +14,7 @@ interface StudentState {
     studentParams: StudentParams;
     studentAll: StudentResponse[];
     studentAllLoaded: boolean;
+    createAndUpdateLoaded: boolean;
 }
 
 
@@ -37,7 +38,8 @@ const initialState: StudentState = {
     students: [],
     studentsLoaded: false,
     studentAll: [],
-    studentAllLoaded: false
+    studentAllLoaded: false,
+    createAndUpdateLoaded: false
 }
 
 export const createStudent = createAsyncThunk<ServiceResponse<StudentResponse[]>, StudentCreate>("student/createStudent",
@@ -137,6 +139,18 @@ const studentSlice = createSlice({
         builder.addCase(getStudentAll.rejected, (state) => {
             state.studentAll = [];
             state.studentAllLoaded = true;
+        })
+
+        builder.addMatcher(isAnyOf(updateStudent.fulfilled, createStudent.fulfilled), (state) => {
+            state.createAndUpdateLoaded = false;
+        })
+
+        builder.addMatcher(isAnyOf(updateStudent.rejected, createStudent.rejected), (state) => {
+            state.createAndUpdateLoaded = false;
+        })
+
+        builder.addMatcher(isAnyOf(updateStudent.pending, createStudent.pending), (state) => {
+            state.createAndUpdateLoaded = true;
         })
     }
 });

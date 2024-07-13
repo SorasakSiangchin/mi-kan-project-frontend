@@ -1,7 +1,7 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 "use client";
 
-import { Autocomplete, Box, Button, FormControl, FormHelperText, Grid, InputLabel, MenuItem, Paper, Select, TextField, Typography, useMediaQuery, useTheme } from "@mui/material"
+import { Autocomplete, Box, Button, CircularProgress, FormControl, FormHelperText, Grid, InputLabel, MenuItem, Paper, Select, TextField, Typography, useMediaQuery, useTheme } from "@mui/material"
 import SaveIcon from '@mui/icons-material/Save';
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import { useRouter } from "next/navigation";
@@ -24,7 +24,7 @@ import useSchoolYear from "@/hooks/useSchoolYear";
 import useTerm from "@/hooks/useTerm";
 import { findMatchOptionAutocompleteSingle, formatDateForMUIDatePicker } from "@/utils/util";
 import { useAppDispatch } from "@/store/store";
-import { createStudent, getStudentById, refresh, updateStudent } from "@/store/slices/studentSlice";
+import { createStudent, getStudentById, refresh, studentSelector, updateStudent } from "@/store/slices/studentSlice";
 import { StudentCreate } from "@/models/students/studentCreate";
 import dayjs from "dayjs";
 import Swal from "sweetalert2";
@@ -70,6 +70,8 @@ const FormStudentPage: FC<Props> = ({
     const dispatch = useAppDispatch();
     const [imageUrl, setImageUrl] = useState<string>("");
     const [student, setStudent] = useState<StudentResponse | null>(null);
+
+    const { createAndUpdateLoaded } = useSelector(studentSelector)
 
     const { userInfo } = useSelector(userSelector)
 
@@ -243,8 +245,15 @@ const FormStudentPage: FC<Props> = ({
                         </Box>
                         <Box>
                             <Button
+                                disabled={createAndUpdateLoaded}
+                                startIcon={
+                                    createAndUpdateLoaded ? (
+                                        <CircularProgress size={15} color="inherit" />
+                                    ) : (
+                                        <SaveIcon />
+                                    )
+                                }
                                 type="submit"
-                                startIcon={<SaveIcon />}
                                 variant="contained"
                                 color="success"
                             >
@@ -546,7 +555,6 @@ const FormStudentPage: FC<Props> = ({
                         />
                     </Grid>
 
-
                     {/* ปีการศึกษา */}
                     <Grid item xs={12} sm={6} md={3}>
                         <Controller
@@ -653,7 +661,7 @@ const ShowImage = ({ imageUrl, student }: { imageUrl: string, student: StudentRe
     if (imageUrl) {
         return <Box className="flex justify-start">
             <Paper style={styleDrop} variant='outlined'>
-                <Image src={imageUrl} width={250} height={300} alt="image-student" />
+                <Image priority src={imageUrl} width={250} height={300} alt="image-student" />
             </Paper>
         </Box>
     }
@@ -661,7 +669,7 @@ const ShowImage = ({ imageUrl, student }: { imageUrl: string, student: StudentRe
         if (student) {
             return <Box className="flex justify-start">
                 {student.imageUrl ? <Paper style={styleDrop} variant='outlined'>
-                    <Image src={productImageURL(student.imageUrl)} width={250} height={300} alt="image-student" />
+                    <Image priority src={productImageURL(student.imageUrl)} width={250} height={300} alt="image-student" />
                 </Paper> : ""}
             </Box>
         }

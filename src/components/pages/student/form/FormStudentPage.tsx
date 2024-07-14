@@ -617,7 +617,7 @@ const FormStudentPage: FC<Props> = ({
                                     helperText={errors.address?.message?.toString()}
                                     multiline
                                     className="w-full"
-                                    label="ที่อยุ่"
+                                    label="ที่อยู่"
                                     variant="outlined" />
                             )}
                         />
